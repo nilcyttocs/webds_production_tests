@@ -35,10 +35,11 @@ export const Progress = (props: any): JSX.Element => {
     const index = parseInt(data.index, 10);
     const name = data.name.replace(/[a-zA-Z0-9]*_/g, "");
     console.log(data);
-    setCurrent(index);
-    setProgress(Math.floor((index / totalTests) * 100));
     setTestName(name);
-    if (data.status === "done" && data.result === "failed") {
+    if (data.status === "done" && data.result === "passed") {
+      setCurrent(index);
+      setProgress(Math.floor((index / totalTests) * 100));
+    } else if (data.status === "done" && data.result === "failed") {
       removeEvent();
       props.commitFailedTestName(name);
       props.changePage(Page.Failure);
@@ -65,7 +66,7 @@ export const Progress = (props: any): JSX.Element => {
         removeEvent();
         setTimeout(() => {
           setPass(true);
-        }, 500);
+        }, 1000);
       }
     };
   };
