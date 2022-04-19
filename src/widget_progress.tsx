@@ -10,6 +10,8 @@ import { Color, Page } from "./widget_container";
 
 import { requestAPI } from "./handler";
 
+const DEFAULT_TEST_SET_ID = "all";
+
 const SSE_CLOSED = 2;
 
 let totalTests = 0;
@@ -99,10 +101,14 @@ export const Progress = (props: any): JSX.Element => {
   };
 
   useEffect(() => {
-    const selected = props.testRepo.sets.find(
-      (item: any) => item.id === props.selectedTestSetID
-    );
-    totalTests = selected.tests.length;
+    if (props.selectedTestSetID === DEFAULT_TEST_SET_ID) {
+      totalTests = [...props.testRepo.common, ...props.testRepo.lib].length;
+    } else {
+      const selected = props.testRepo.sets.find(
+        (item: any) => item.id === props.selectedTestSetID
+      );
+      totalTests = selected.tests.length;
+    }
     setTotal(totalTests);
     runTests(props.selectedTestSetID);
   }, []);
