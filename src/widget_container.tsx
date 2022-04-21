@@ -137,6 +137,12 @@ const ProductionTestsContainer = (props: any): JSX.Element => {
   };
 
   const initialize = async () => {
+    try{
+      await props.service.packrat.cache.addPrivateConfig();
+    } catch (error) {
+      console.error(error);
+      return;
+    }
     try {
       const fpn = await props.service.touchcomm.getPartNumber();
       setFullPartNumber(fpn);
