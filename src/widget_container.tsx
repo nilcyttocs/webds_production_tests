@@ -12,6 +12,8 @@ import { Landing } from "./widget_landing";
 
 import { Edit } from "./widget_edit";
 
+import { Config } from "./widget_config";
+
 import { Failure } from "./widget_failure";
 
 import { Progress } from "./widget_progress";
@@ -28,6 +30,7 @@ export const Color = {
 export enum Page {
   Landing = "LANDING",
   Edit = "EDIT",
+  Config = "CONFIG",
   Failure = "FAILURE",
   Progress = "PROGRESS"
 }
@@ -75,6 +78,19 @@ const ProductionTestsContainer = (props: any): JSX.Element => {
     }
   };
 
+  const commitCustomTestSettings = async (testSettings: any) => {
+    try {
+      await requestAPI<any>("production-tests/" + fullPartNumber, {
+        body: JSON.stringify(testSettings),
+        method: "PUT"
+      });
+    } catch (error) {
+      console.error(
+        `Error - PUT /webds/production-tests/${fullPartNumber}\n${error}`
+      );
+    }
+  };
+
   const displayPage = (): JSX.Element | null => {
     switch (page) {
       case Page.Landing:
@@ -103,6 +119,18 @@ const ProductionTestsContainer = (props: any): JSX.Element => {
             selectedTestSetID={selectedTestSetID}
             changePage={changePage}
             commitCustomTestSets={commitCustomTestSets}
+          />
+        );
+      case Page.Config:
+        return (
+          <Config
+            width={WIDTH}
+            height={HEIGHT}
+            theme={webdsTheme}
+            partNumber={partNumber}
+            testRepo={testRepo}
+            changePage={changePage}
+            commitCustomTestSettings={commitCustomTestSettings}
           />
         );
       case Page.Failure:
@@ -137,7 +165,7 @@ const ProductionTestsContainer = (props: any): JSX.Element => {
   };
 
   const initialize = async () => {
-    try{
+    try {
       await props.service.packrat.cache.addPrivateConfig();
     } catch (error) {
       console.error(error);

@@ -65,6 +65,12 @@ export const Landing = (props: any): JSX.Element => {
     props.changePage(Page.Edit);
   };
 
+  const handleConfigButtonClick = (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    props.changePage(Page.Config);
+  };
+
   const handleListItemClick = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
     id: string,
@@ -282,6 +288,20 @@ export const Landing = (props: any): JSX.Element => {
             sx={{ width: "100px" }}
           >
             Run
+          </Button>
+          <Button
+            variant="text"
+            onClick={(event) => handleConfigButtonClick(event)}
+            sx={{
+              position: "absolute",
+              top: "5px",
+              left: "20px",
+              textTransform: "none"
+            }}
+          >
+            <Typography variant="body2" sx={{ textDecoration: "underline" }}>
+              Config
+            </Typography>
           </Button>
           <Button
             variant="text"
