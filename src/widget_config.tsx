@@ -31,16 +31,16 @@ export const Config = (props: any): JSX.Element => {
   });
 
   useEffect(() => {
-    if (!props.testRepo.settings) {
+    if (!props.testRepo.settings || !props.testRepo.settings.voltages) {
       return;
     }
-    const settings = props.testRepo.settings;
-    if ("vdd" in settings) {
+    const vSettings = props.testRepo.settings.voltages;
+    if ("vdd" in vSettings) {
       let v: powerOptions = {};
-      v["VDDL"] = settings["vdd"];
-      v["VDDH"] = settings["vled"];
-      v["VDD12"] = settings["vddtx"];
-      v["VBUS"] = settings["vpu"];
+      v["VDDL"] = vSettings["vdd"];
+      v["VDDH"] = vSettings["vled"];
+      v["VDD12"] = vSettings["vddtx"];
+      v["VBUS"] = vSettings["vpu"];
       setVoltages(v);
     }
   }, [props.testRepo]);
@@ -65,12 +65,15 @@ export const Config = (props: any): JSX.Element => {
   const handleDoneButtonClick = (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
-    if (props.testRepo.settings && "vdd" in props.testRepo.settings) {
-      const settings = props.testRepo.settings;
-      settings["vdd"] = voltages["VDDL"];
-      settings["vled"] = voltages["VDDH"];
-      settings["vddtx"] = voltages["VDD12"];
-      settings["vpu"] = voltages["VBUS"];
+    if (
+      props.testRepo.settings &&
+      props.testRepo.settings.voltages &&
+      "vdd" in props.testRepo.settings.voltages
+    ) {
+      props.testRepo.settings.voltages["vdd"] = voltages["VDDL"];
+      props.testRepo.settings.voltages["vled"] = voltages["VDDH"];
+      props.testRepo.settings.voltages["vddtx"] = voltages["VDD12"];
+      props.testRepo.settings.voltages["vpu"] = voltages["VBUS"];
       props.commitCustomTestSettings(props.testRepo);
     }
     props.changePage(Page.Landing);
