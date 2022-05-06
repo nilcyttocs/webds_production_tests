@@ -45,6 +45,7 @@ export const Landing = (props: any): JSX.Element => {
   const handleAddButtonClick = (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
+    setTestSetEntry({ id: null, name: "Test Set" });
     setOpenDialog(true);
   };
 
@@ -88,7 +89,6 @@ export const Landing = (props: any): JSX.Element => {
   };
 
   const handleDialogClose = () => {
-    setTestSetEntry({ id: null, name: "Test Set" });
     setOpenDialog(false);
   };
 
@@ -262,7 +262,7 @@ export const Landing = (props: any): JSX.Element => {
             <DialogActions>
               <Button
                 onClick={(event) => handleDialogDoneButtonClick(event)}
-                sx={{ width: "75" }}
+                sx={{ width: "75px" }}
               >
                 Done
               </Button>
