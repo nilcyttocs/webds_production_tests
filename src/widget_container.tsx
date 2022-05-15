@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 
 import { ReactWidget } from "@jupyterlab/apputils";
 
+import Alert from "@mui/material/Alert";
+
 import CircularProgress from "@mui/material/CircularProgress";
 
 import { green, grey, red } from "@mui/material/colors";
@@ -38,7 +40,18 @@ export enum Page {
 const WIDTH = 800;
 const HEIGHT = 450;
 
+let alertMessage = "";
+
+const alertMessagePrivateConfig =
+  "Failed to retrieve private config JSON file.";
+
+const alertMessageDevicePartNumber = "Failed to read device part number.";
+
+const alertMessageTestSets = "Failed to retrive test sets for ";
+
 const ProductionTestsContainer = (props: any): JSX.Element => {
+  const [initialized, setInitialized] = useState<boolean>(false);
+  const [alert, setAlert] = useState<boolean>(false);
   const [page, setPage] = useState<Page>(Page.Landing);
   const [marginLeft, setMarginLeft] = useState<number>(0);
   const [partNumber, setPartNumber] = useState<string>("");
@@ -169,25 +182,41 @@ const ProductionTestsContainer = (props: any): JSX.Element => {
       await props.service.packrat.cache.addPrivateConfig();
     } catch (error) {
       console.error(error);
+      alertMessage = alertMessagePrivateConfig;
+      setAlert(true);
+      return;
+    }
+    let fpn = "";
+    try {
+      fpn = await props.service.touchcomm.getPartNumber();
+      setFullPartNumber(fpn);
+      setPartNumber(fpn.split("-")[0]);
+    } catch (error) {
+      console.error(error);
+      alertMessage = alertMessageDevicePartNumber;
+      setAlert(true);
       return;
     }
     try {
-      const fpn = await props.service.touchcomm.getPartNumber();
-      setFullPartNumber(fpn);
-      setPartNumber(fpn.split("-")[0]);
       const tr = await requestAPI<any>("production-tests/" + fpn);
       if (!tr || Object.keys(tr).length === 0) {
+        alertMessage = alertMessageTestSets + fpn + ".";
+        setAlert(true);
         return;
       }
       setTestRepo(tr);
     } catch (error) {
-      console.error(`Failed to get part number and test sets\n${error}`);
+      console.error(error);
+      alertMessage = alertMessageTestSets + fpn + ".";
+      setAlert(true);
+      return;
     }
     const selector = document.querySelector(".jp-webds-widget-body");
     if (selector) {
       const style = getComputedStyle(selector);
       setMarginLeft(parseInt(style!.marginLeft, 10));
     }
+    setInitialized(true);
   };
 
   useEffect(() => {
@@ -198,12 +227,22 @@ const ProductionTestsContainer = (props: any): JSX.Element => {
 
   return (
     <div className="jp-webds-widget-body">
-      {testRepo ? (
+      {initialized ? (
         displayPage()
       ) : (
-        <div style={{ marginLeft: 200, marginTop: 200 }}>
-          <CircularProgress color="primary" />
-        </div>
+        <>
+          <div
+            style={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)"
+            }}
+          >
+            <CircularProgress color="primary" />
+          </div>
+          {alert ? <Alert severity="error">{alertMessage}</Alert> : null}
+        </>
       )}
     </div>
   );
