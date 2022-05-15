@@ -51,7 +51,7 @@ const alertMessagePrivateConfig =
 
 const alertMessageDevicePartNumber = "Failed to read device part number.";
 
-const alertMessageTestSets = "Failed to retrive test sets for ";
+const alertMessageTestSets = "Failed to retrieve test sets for ";
 
 const ProductionTestsContainer = (props: any): JSX.Element => {
   const [initialized, setInitialized] = useState<boolean>(false);
@@ -264,7 +264,11 @@ const ProductionTestsContainer = (props: any): JSX.Element => {
           >
             <CircularProgress color="primary" />
           </div>
-          {alert ? <Alert severity="error">{alertMessage}</Alert> : null}
+          {alert ? (
+            <Alert severity="error" onClose={() => setAlert(false)}>
+              {alertMessage}
+            </Alert>
+          ) : null}
         </>
       )}
     </div>
