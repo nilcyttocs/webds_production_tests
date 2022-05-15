@@ -40,7 +40,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
       },
       execute: () => {
         if (!widget || widget.isDisposed) {
-          const content = new ProductionTestsWidget(service);
+          const content = new ProductionTestsWidget(app, service);
           widget = new MainAreaWidget<ProductionTestsWidget>({ content });
           widget.id = "webds_production_tests_widget";
           widget.title.label = "Production Tests";

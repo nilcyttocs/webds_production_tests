@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 
+import { JupyterFrontEnd } from "@jupyterlab/application";
+
 import { ReactWidget } from "@jupyterlab/apputils";
 
 import Alert from "@mui/material/Alert";
@@ -40,6 +42,8 @@ export enum Page {
 const WIDTH = 800;
 const HEIGHT = 450;
 
+const logLocation = "Synaptics/_links/Production_Tests_Log";
+
 let alertMessage = "";
 
 const alertMessagePrivateConfig =
@@ -61,6 +65,23 @@ const ProductionTestsContainer = (props: any): JSX.Element => {
   const [selectedTestSetID, setSelectedTestSetID] = useState<string | null>(
     null
   );
+
+  const { commands, shell } = props.frontend;
+
+  const showLog = async () => {
+    commands
+      .execute("docmanager:open", {
+        path: logLocation,
+        factory: "Editor",
+        options: { mode: "split-right" }
+      })
+      .then((widget: any) => {
+        widget.id = "production_tests_log";
+        widget.title.closable = true;
+        if (!widget.isAttached) shell.add(widget, "main");
+        shell.activateById(widget.id);
+      });
+  };
 
   const changePage = (newPage: Page) => {
     setPage(newPage);
@@ -156,6 +177,7 @@ const ProductionTestsContainer = (props: any): JSX.Element => {
             testRepo={testRepo}
             failedTestName={failedTestName}
             changePage={changePage}
+            showLog={showLog}
           />
         );
       case Page.Progress:
@@ -170,6 +192,7 @@ const ProductionTestsContainer = (props: any): JSX.Element => {
             selectedTestSetID={selectedTestSetID}
             changePage={changePage}
             commitFailedTestName={commitFailedTestName}
+            showLog={showLog}
           />
         );
       default:
@@ -249,17 +272,22 @@ const ProductionTestsContainer = (props: any): JSX.Element => {
 };
 
 export class ProductionTestsWidget extends ReactWidget {
+  frontend: JupyterFrontEnd | null = null;
   service: WebDSService | null = null;
 
-  constructor(service: WebDSService) {
+  constructor(app: JupyterFrontEnd, service: WebDSService) {
     super();
+    this.frontend = app;
     this.service = service;
   }
 
   render(): JSX.Element {
     return (
       <div className="jp-webds-widget">
-        <ProductionTestsContainer service={this.service} />
+        <ProductionTestsContainer
+          frontend={this.frontend}
+          service={this.service}
+        />
       </div>
     );
   }

@@ -22,7 +22,9 @@ export const Failure = (props: any): JSX.Element => {
           {props.partNumber} Production Tests
         </Typography>
         <Box sx={{ height: "25px" }}>
-          <Typography sx={{ textAlign: "center" }}>{props.failedTestName}</Typography>
+          <Typography sx={{ textAlign: "center" }}>
+            {props.failedTestName}
+          </Typography>
         </Box>
         <div style={{ position: "relative" }}>
           <Box
@@ -64,6 +66,20 @@ export const Failure = (props: any): JSX.Element => {
             sx={{ width: "100px" }}
           >
             Done
+          </Button>
+          <Button
+            variant="text"
+            onClick={props.showLog}
+            sx={{
+              position: "absolute",
+              top: "5px",
+              right: "20px",
+              textTransform: "none"
+            }}
+          >
+            <Typography variant="body2" sx={{ textDecoration: "underline" }}>
+              Log
+            </Typography>
           </Button>
         </div>
       </Box>

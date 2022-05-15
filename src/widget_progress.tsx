@@ -200,6 +200,20 @@ export const Progress = (props: any): JSX.Element => {
               Abort
             </Button>
           )}
+          <Button
+            variant="text"
+            onClick={props.showLog}
+            sx={{
+              position: "absolute",
+              top: "5px",
+              right: "20px",
+              textTransform: "none"
+            }}
+          >
+            <Typography variant="body2" sx={{ textDecoration: "underline" }}>
+              Log
+            </Typography>
+          </Button>
         </div>
       </Box>
     </ThemeProvider>
