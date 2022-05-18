@@ -53,7 +53,9 @@ const alertMessagePrivateConfig =
 
 const alertMessageDevicePartNumber = "Failed to read device part number.";
 
-const alertMessageTestSets = "Failed to retrieve test sets for ";
+const alertMessageTestSetsStart = "Failed to retrieve test sets for ";
+
+const alertMessageTestSetsEnd = "Production tests not currently available for ";
 
 const ProductionTestsContainer = (props: any): JSX.Element => {
   const [initialized, setInitialized] = useState<boolean>(false);
@@ -220,14 +222,26 @@ const ProductionTestsContainer = (props: any): JSX.Element => {
     try {
       const tr = await requestAPI<any>("production-tests/" + fpn);
       if (!tr || Object.keys(tr).length === 0) {
-        alertMessage = alertMessageTestSets + fpn + ".";
+        alertMessage =
+          alertMessageTestSetsStart +
+          fpn +
+          ". " +
+          alertMessageTestSetsEnd +
+          fpn +
+          ".";
         setAlert(true);
         return;
       }
       setTestRepo(tr);
     } catch (error) {
       console.error(error);
-      alertMessage = alertMessageTestSets + fpn + ".";
+      alertMessage =
+        alertMessageTestSetsStart +
+        fpn +
+        ". " +
+        alertMessageTestSetsEnd +
+        fpn +
+        ".";
       setAlert(true);
       return;
     }
