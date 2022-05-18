@@ -19,7 +19,6 @@ import DialogContent from "@mui/material/DialogContent";
 import TextField from "@mui/material/TextField";
 
 import Typography from "@mui/material/Typography";
-import { ThemeProvider } from "@mui/material/styles";
 
 import { Color, Page } from "./widget_container";
 
@@ -198,13 +197,13 @@ export const Landing = (props: any): JSX.Element => {
   }, [props.testRepo]);
 
   return (
-    <ThemeProvider theme={props.theme}>
+    <>
       <Box sx={{ width: props.width + "px" }}>
         <Typography variant="h5" sx={{ height: "50px", textAlign: "center" }}>
           {props.partNumber} Production Tests
         </Typography>
         <Box sx={{ height: "25px" }}>
-          <Typography sx={{ textAlign: "center" }}>select test set</Typography>
+          <Typography sx={{ textAlign: "center" }}>Select Test Set</Typography>
         </Box>
         <Box
           sx={{
@@ -329,6 +328,6 @@ export const Landing = (props: any): JSX.Element => {
           </Button>
         </div>
       </Box>
-    </ThemeProvider>
+    </>
   );
 };

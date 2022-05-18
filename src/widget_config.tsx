@@ -14,7 +14,6 @@ import InputAdornment from "@mui/material/InputAdornment";
 import OutlinedInput from "@mui/material/OutlinedInput";
 
 import Typography from "@mui/material/Typography";
-import { ThemeProvider } from "@mui/material/styles";
 
 import { Color, Page } from "./widget_container";
 
@@ -80,14 +79,14 @@ export const Config = (props: any): JSX.Element => {
   };
 
   return (
-    <ThemeProvider theme={props.theme}>
+    <>
       <Box sx={{ width: props.width + "px" }}>
         <Typography variant="h5" sx={{ height: "50px", textAlign: "center" }}>
           {props.partNumber} Production Tests
         </Typography>
         <Box sx={{ height: "25px" }}>
           <Typography sx={{ textAlign: "center" }}>
-            edit test configuration
+            Edit Test Configuration
           </Typography>
         </Box>
         <Box
@@ -106,8 +105,9 @@ export const Config = (props: any): JSX.Element => {
               <Typography sx={{ width: "25%", flexShrink: 0 }}>
                 Voltages
               </Typography>
-              <Typography sx={{ color: "text.secondary" }}>
+              <Typography sx={{ paddingLeft: "4px", color: "text.secondary" }}>
                 {JSON.stringify(voltages)
+                  .replace(/:/g, ": ")
                   .replace(/"|{|}/g, "")
                   .replace(/,/g, ", ")}
               </Typography>
@@ -156,6 +156,6 @@ export const Config = (props: any): JSX.Element => {
           </Button>
         </div>
       </Box>
-    </ThemeProvider>
+    </>
   );
 };

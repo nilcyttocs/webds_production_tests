@@ -4,7 +4,6 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 
 import Typography from "@mui/material/Typography";
-import { ThemeProvider } from "@mui/material/styles";
 
 import { Color, Page } from "./widget_container";
 
@@ -115,7 +114,7 @@ export const Progress = (props: any): JSX.Element => {
   }, []);
 
   return (
-    <ThemeProvider theme={props.theme}>
+    <>
       <Box sx={{ width: props.width + "px" }}>
         <Typography variant="h5" sx={{ height: "50px", textAlign: "center" }}>
           {props.partNumber} Production Tests
@@ -216,6 +215,6 @@ export const Progress = (props: any): JSX.Element => {
           </Button>
         </div>
       </Box>
-    </ThemeProvider>
+    </>
   );
 };

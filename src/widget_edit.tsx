@@ -17,7 +17,6 @@ import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 
 import Typography from "@mui/material/Typography";
-import { ThemeProvider } from "@mui/material/styles";
 
 import { Color, Page } from "./widget_container";
 
@@ -239,13 +238,13 @@ export const Edit = (props: any): JSX.Element => {
   }, [props.testRepo]);
 
   return (
-    <ThemeProvider theme={props.theme}>
+    <>
       <Box sx={{ width: props.width + "px" }}>
         <Typography variant="h5" sx={{ height: "50px", textAlign: "center" }}>
           {props.partNumber} Production Tests
         </Typography>
         <Box sx={{ height: "25px" }}>
-          <Typography sx={{ textAlign: "center" }}>edit test set</Typography>
+          <Typography sx={{ textAlign: "center" }}>Edit Test Set</Typography>
         </Box>
         <DragDropContext onDragEnd={handleOnDragEnd}>
           <Box
@@ -330,6 +329,6 @@ export const Edit = (props: any): JSX.Element => {
           </Button>
         </div>
       </Box>
-    </ThemeProvider>
+    </>
   );
 };

@@ -10,6 +10,8 @@ import CircularProgress from "@mui/material/CircularProgress";
 
 import { green, grey, red } from "@mui/material/colors";
 
+import { ThemeProvider } from "@mui/material/styles";
+
 import { WebDSService } from "@webds/service";
 
 import { Landing } from "./widget_landing";
@@ -132,7 +134,6 @@ const ProductionTestsContainer = (props: any): JSX.Element => {
           <Landing
             width={WIDTH}
             height={HEIGHT}
-            theme={webdsTheme}
             partNumber={partNumber}
             testRepo={testRepo}
             selectedTestSetID={selectedTestSetID}
@@ -146,7 +147,6 @@ const ProductionTestsContainer = (props: any): JSX.Element => {
           <Edit
             width={WIDTH}
             height={HEIGHT}
-            theme={webdsTheme}
             marginLeft={marginLeft}
             partNumber={partNumber}
             testRepo={testRepo}
@@ -160,7 +160,6 @@ const ProductionTestsContainer = (props: any): JSX.Element => {
           <Config
             width={WIDTH}
             height={HEIGHT}
-            theme={webdsTheme}
             partNumber={partNumber}
             testRepo={testRepo}
             changePage={changePage}
@@ -172,7 +171,6 @@ const ProductionTestsContainer = (props: any): JSX.Element => {
           <Failure
             width={WIDTH}
             height={HEIGHT}
-            theme={webdsTheme}
             partNumber={partNumber}
             testRepo={testRepo}
             failedTestName={failedTestName}
@@ -185,7 +183,6 @@ const ProductionTestsContainer = (props: any): JSX.Element => {
           <Progress
             width={WIDTH}
             height={HEIGHT}
-            theme={webdsTheme}
             partNumber={partNumber}
             fullPartNumber={fullPartNumber}
             testRepo={testRepo}
@@ -250,27 +247,29 @@ const ProductionTestsContainer = (props: any): JSX.Element => {
 
   return (
     <div className="jp-webds-widget-body">
-      {initialized ? (
-        displayPage()
-      ) : (
-        <>
-          <div
-            style={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)"
-            }}
-          >
-            <CircularProgress color="primary" />
-          </div>
-          {alert ? (
-            <Alert severity="error" onClose={() => setAlert(false)}>
-              {alertMessage}
-            </Alert>
-          ) : null}
-        </>
-      )}
+      <ThemeProvider theme={webdsTheme}>
+        {initialized ? (
+          displayPage()
+        ) : (
+          <>
+            <div
+              style={{
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)"
+              }}
+            >
+              <CircularProgress color="primary" />
+            </div>
+            {alert ? (
+              <Alert severity="error" onClose={() => setAlert(false)}>
+                {alertMessage}
+              </Alert>
+            ) : null}
+          </>
+        )}
+      </ThemeProvider>
     </div>
   );
 };
