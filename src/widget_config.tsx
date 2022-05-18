@@ -22,6 +22,7 @@ type powerOptions = {
 };
 
 export const Config = (props: any): JSX.Element => {
+  const [accordionExpanded, setAccordionExpanded] = useState<boolean>(false);
   const [voltages, setVoltages] = useState<powerOptions>({
     VDDL: "1800",
     VDDH: "3300",
@@ -29,20 +30,9 @@ export const Config = (props: any): JSX.Element => {
     VBUS: "1800"
   });
 
-  useEffect(() => {
-    if (!props.testRepo.settings || !props.testRepo.settings.voltages) {
-      return;
-    }
-    const vSettings = props.testRepo.settings.voltages;
-    if ("vdd" in vSettings) {
-      let v: powerOptions = {};
-      v["VDDL"] = vSettings["vdd"];
-      v["VDDH"] = vSettings["vled"];
-      v["VDD12"] = vSettings["vddtx"];
-      v["VBUS"] = vSettings["vpu"];
-      setVoltages(v);
-    }
-  }, [props.testRepo]);
+  const handleAccordionExpandedChange = (expanded: boolean) => {
+    setAccordionExpanded(expanded);
+  };
 
   const handleInputChange = (item: string, value: string) => {
     if (value !== "" && isNaN(Number(value))) {
@@ -78,6 +68,21 @@ export const Config = (props: any): JSX.Element => {
     props.changePage(Page.Landing);
   };
 
+  useEffect(() => {
+    if (!props.testRepo.settings || !props.testRepo.settings.voltages) {
+      return;
+    }
+    const vSettings = props.testRepo.settings.voltages;
+    if ("vdd" in vSettings) {
+      let v: powerOptions = {};
+      v["VDDL"] = vSettings["vdd"];
+      v["VDDH"] = vSettings["vled"];
+      v["VDD12"] = vSettings["vddtx"];
+      v["VBUS"] = vSettings["vpu"];
+      setVoltages(v);
+    }
+  }, [props.testRepo]);
+
   return (
     <>
       <Box sx={{ width: props.width + "px" }}>
@@ -100,17 +105,25 @@ export const Config = (props: any): JSX.Element => {
             overflow: "auto"
           }}
         >
-          <Accordion>
+          <Accordion
+            onChange={(event, expanded) =>
+              handleAccordionExpandedChange(expanded)
+            }
+          >
             <AccordionSummary expandIcon={<ExpandMore />}>
               <Typography sx={{ width: "25%", flexShrink: 0 }}>
                 Voltages
               </Typography>
-              <Typography sx={{ paddingLeft: "4px", color: "text.secondary" }}>
-                {JSON.stringify(voltages)
-                  .replace(/:/g, ": ")
-                  .replace(/"|{|}/g, "")
-                  .replace(/,/g, ", ")}
-              </Typography>
+              {accordionExpanded ? null : (
+                <Typography
+                  sx={{ paddingLeft: "4px", color: "text.secondary" }}
+                >
+                  {JSON.stringify(voltages)
+                    .replace(/:/g, ": ")
+                    .replace(/"|{|}/g, "")
+                    .replace(/,/g, ", ")}
+                </Typography>
+              )}
             </AccordionSummary>
             <AccordionDetails>
               <Stack justifyContent="center" spacing={2} direction="row">
