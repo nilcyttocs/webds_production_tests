@@ -13,7 +13,14 @@ import InputLabel from "@mui/material/InputLabel";
 import InputAdornment from "@mui/material/InputAdornment";
 import OutlinedInput from "@mui/material/OutlinedInput";
 
+import Switch from "@mui/material/Switch";
+import TextField from "@mui/material/TextField";
+
 import Typography from "@mui/material/Typography";
+
+import { styled } from "@mui/material/styles";
+
+import { requestAPI } from "./handler";
 
 import { Color, Page } from "./widget_container";
 
@@ -22,17 +29,19 @@ type powerOptions = {
 };
 
 export const Config = (props: any): JSX.Element => {
-  const [accordionExpanded, setAccordionExpanded] = useState<boolean>(false);
   const [voltages, setVoltages] = useState<powerOptions>({
     VDDL: "1800",
     VDDH: "3300",
     VDD12: "1200",
     VBUS: "1800"
   });
+  const [image, setImage] = useState("");
+  const [imgErr, setImgErr] = useState(false);
+  const [doReflash, setDoReflash] = useState(false);
 
-  const handleAccordionExpandedChange = (expanded: boolean) => {
-    setAccordionExpanded(expanded);
-  };
+  const Input = styled("input")({
+    display: "none"
+  });
 
   const handleInputChange = (item: string, value: string) => {
     if (value !== "" && isNaN(Number(value))) {
@@ -51,11 +60,39 @@ export const Config = (props: any): JSX.Element => {
     }
   };
 
+  const uploadImage = async (file: File) => {
+    const formData = new FormData();
+    formData.append("files", file);
+    formData.append("location", "/tmp");
+    try {
+      await requestAPI<any>("filesystem", {
+        body: formData,
+        method: "POST"
+      });
+    } catch (error) {
+      console.error(`Error - POST /webds/filesystem\n${error}`);
+    }
+  };
+
+  const handleSelectedFile = (event: any) => {
+    setImage(event.target.files[0].name);
+    uploadImage(event.target.files[0]);
+  };
+
+  const handleSwitchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setDoReflash(event.target.checked);
+  };
+
   const handleDoneButtonClick = (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
+    props.testRepo.settings.reflash = {};
+    props.testRepo.settings.reflash["enable"] = doReflash;
+    if (doReflash) {
+      props.testRepo.settings.reflash["file"] = image;
+    }
+
     if (
-      props.testRepo.settings &&
       props.testRepo.settings.voltages &&
       "vdd" in props.testRepo.settings.voltages
     ) {
@@ -63,13 +100,31 @@ export const Config = (props: any): JSX.Element => {
       props.testRepo.settings.voltages["vled"] = voltages["VDDH"];
       props.testRepo.settings.voltages["vddtx"] = voltages["VDD12"];
       props.testRepo.settings.voltages["vpu"] = voltages["VBUS"];
-      props.commitCustomTestSettings(props.testRepo);
     }
+
+    props.commitCustomTestSettings(props.testRepo);
+
     props.changePage(Page.Landing);
   };
 
   useEffect(() => {
-    if (!props.testRepo.settings || !props.testRepo.settings.voltages) {
+    if (doReflash) {
+      setImgErr(image === undefined || image === "" ? true : false);
+    } else {
+      setImgErr(false);
+    }
+  }, [doReflash, image]);
+
+  useEffect(() => {
+    if (!props.testRepo.settings.reflash) {
+      return;
+    }
+    setDoReflash(props.testRepo.settings.reflash["enable"]);
+    setImage(props.testRepo.settings.reflash["file"]);
+  }, [props.testRepo]);
+
+  useEffect(() => {
+    if (!props.testRepo.settings.voltages) {
       return;
     }
     const vSettings = props.testRepo.settings.voltages;
@@ -105,25 +160,17 @@ export const Config = (props: any): JSX.Element => {
             overflow: "auto"
           }}
         >
-          <Accordion
-            onChange={(event, expanded) =>
-              handleAccordionExpandedChange(expanded)
-            }
-          >
+          <Accordion>
             <AccordionSummary expandIcon={<ExpandMore />}>
               <Typography sx={{ width: "25%", flexShrink: 0 }}>
                 Voltages
               </Typography>
-              {accordionExpanded ? null : (
-                <Typography
-                  sx={{ paddingLeft: "4px", color: "text.secondary" }}
-                >
-                  {JSON.stringify(voltages)
-                    .replace(/:/g, ": ")
-                    .replace(/"|{|}/g, "")
-                    .replace(/,/g, ", ")}
-                </Typography>
-              )}
+              <Typography sx={{ paddingLeft: "4px", color: "text.secondary" }}>
+                {JSON.stringify(voltages)
+                  .replace(/:/g, ": ")
+                  .replace(/"|{|}/g, "")
+                  .replace(/,/g, ", ")}
+              </Typography>
             </AccordionSummary>
             <AccordionDetails>
               <Stack justifyContent="center" spacing={2} direction="row">
@@ -152,6 +199,49 @@ export const Config = (props: any): JSX.Element => {
               </Stack>
             </AccordionDetails>
           </Accordion>
+          <Accordion>
+            <AccordionSummary expandIcon={<ExpandMore />}>
+              <Typography sx={{ width: "25%", flexShrink: 0 }}>
+                Reflash
+              </Typography>
+              <Typography sx={{ paddingLeft: "4px", color: "text.secondary" }}>
+                {doReflash ? "Enabled" : "Disabled"}
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Stack spacing={2} direction="column">
+                <Switch onChange={handleSwitchChange} checked={doReflash} />
+                {doReflash && (
+                  <>
+                    <label htmlFor="button-reflash-image">
+                      <Input
+                        id="button-reflash-image"
+                        type="file"
+                        accept=".img"
+                        onChange={(event) => handleSelectedFile(event)}
+                      />
+                      <Button
+                        component="span"
+                        sx={{ width: "100px", marginRight: "25px" }}
+                      >
+                        Image
+                      </Button>
+                      <TextField
+                        id="file-reflash-image"
+                        defaultValue=""
+                        value={image}
+                        error={imgErr}
+                        InputProps={{ readOnly: true }}
+                        variant="standard"
+                        onChange={(event) => setImage(event.target.value)}
+                        sx={{ width: "500px" }}
+                      />
+                    </label>
+                  </>
+                )}
+              </Stack>
+            </AccordionDetails>
+          </Accordion>
         </Box>
         <div
           style={{
@@ -162,6 +252,7 @@ export const Config = (props: any): JSX.Element => {
           }}
         >
           <Button
+            disabled={imgErr}
             onClick={(event) => handleDoneButtonClick(event)}
             sx={{ width: "100px" }}
           >
