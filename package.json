@@ -1,6 +1,6 @@
 {
   "name": "@webds/production_tests",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "webds_production_tests",
   "keywords": [
     "jupyter",
