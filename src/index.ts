@@ -4,11 +4,11 @@ import {
   JupyterFrontEndPlugin
 } from "@jupyterlab/application";
 
-import { MainAreaWidget, WidgetTracker } from "@jupyterlab/apputils";
+import { WidgetTracker } from "@jupyterlab/apputils";
 
 import { ILauncher } from "@jupyterlab/launcher";
 
-import { WebDSService } from "@webds/service";
+import { WebDSService, WebDSWidget } from "@webds/service";
 
 import { productionTestsIcon } from "./icons";
 
@@ -29,7 +29,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
   ) => {
     console.log("JupyterLab extension @webds/production_tests is activated!");
 
-    let widget: MainAreaWidget;
+    let widget: WebDSWidget;
     const { commands, shell } = app;
     const command: string = "webds_production_tests:open";
     commands.addCommand(command, {
@@ -41,7 +41,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
       execute: () => {
         if (!widget || widget.isDisposed) {
           const content = new ProductionTestsWidget(app, service);
-          widget = new MainAreaWidget<ProductionTestsWidget>({ content });
+          widget = new WebDSWidget<ProductionTestsWidget>({ content });
           widget.id = "webds_production_tests_widget";
           widget.title.label = "Production Tests";
           widget.title.icon = productionTestsIcon;
@@ -62,7 +62,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
       category: "WebDS - Testing"
     });
 
-    let tracker = new WidgetTracker<MainAreaWidget>({
+    let tracker = new WidgetTracker<WebDSWidget>({
       namespace: "webds_production_tests"
     });
     restorer.restore(tracker, {
