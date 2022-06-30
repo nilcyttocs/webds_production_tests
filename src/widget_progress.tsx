@@ -205,7 +205,7 @@ export const Progress = (props: any): JSX.Element => {
             sx={{
               position: "absolute",
               top: "5px",
-              right: "20px",
+              right: "0px",
               textTransform: "none"
             }}
           >

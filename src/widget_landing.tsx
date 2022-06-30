@@ -294,7 +294,7 @@ export const Landing = (props: any): JSX.Element => {
             sx={{
               position: "absolute",
               top: "5px",
-              left: "20px",
+              left: "0px",
               textTransform: "none"
             }}
           >
@@ -309,7 +309,7 @@ export const Landing = (props: any): JSX.Element => {
             sx={{
               position: "absolute",
               top: "5px",
-              right: "20px",
+              right: "0px",
               textTransform: "none"
             }}
           >
