@@ -14,6 +14,15 @@ import { productionTestsIcon } from "./icons";
 
 import { ProductionTestsWidget } from "./widget_container";
 
+namespace Attributes {
+  export const command = "webds_production_tests:open";
+  export const id = "webds_production_tests_widget";
+  export const label = "Production Tests";
+  export const caption = "Production Tests";
+  export const category = "Touch - Assessment";
+  export const rank = 10;
+}
+
 /**
  * Initialization data for the @webds/production_tests extension.
  */
@@ -31,10 +40,10 @@ const plugin: JupyterFrontEndPlugin<void> = {
 
     let widget: WebDSWidget;
     const { commands, shell } = app;
-    const command: string = "webds_production_tests:open";
+    const command = Attributes.command;
     commands.addCommand(command, {
-      label: "Production Tests",
-      caption: "Production Tests",
+      label: Attributes.label,
+      caption: Attributes.caption,
       icon: (args: { [x: string]: any }) => {
         return args["isLauncher"] ? productionTestsIcon : undefined;
       },
@@ -42,8 +51,8 @@ const plugin: JupyterFrontEndPlugin<void> = {
         if (!widget || widget.isDisposed) {
           const content = new ProductionTestsWidget(app, service);
           widget = new WebDSWidget<ProductionTestsWidget>({ content });
-          widget.id = "webds_production_tests_widget";
-          widget.title.label = "Production Tests";
+          widget.id = Attributes.id;
+          widget.title.label = Attributes.label;
           widget.title.icon = productionTestsIcon;
           widget.title.closable = true;
         }
@@ -59,15 +68,16 @@ const plugin: JupyterFrontEndPlugin<void> = {
     launcher.add({
       command,
       args: { isLauncher: true },
-      category: "WebDS - Testing"
+      category: Attributes.category,
+      rank: Attributes.rank
     });
 
     let tracker = new WidgetTracker<WebDSWidget>({
-      namespace: "webds_production_tests"
+      namespace: Attributes.id
     });
     restorer.restore(tracker, {
       command,
-      name: () => "webds_production_tests"
+      name: () => Attributes.id
     });
   }
 };
