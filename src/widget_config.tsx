@@ -1,32 +1,71 @@
 import React, { useEffect, useState } from "react";
 
 import Box from "@mui/material/Box";
-import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
 
-import Accordion from "@mui/material/Accordion";
-import AccordionSummary from "@mui/material/AccordionSummary";
-import AccordionDetails from "@mui/material/AccordionDetails";
+import MuiAccordion, { AccordionProps } from "@mui/material/Accordion";
+import MuiAccordionSummary, {
+  AccordionSummaryProps
+} from "@mui/material/AccordionSummary";
+import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
+import MuiAccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import InputAdornment from "@mui/material/InputAdornment";
 import OutlinedInput from "@mui/material/OutlinedInput";
-
 import Switch from "@mui/material/Switch";
 import TextField from "@mui/material/TextField";
-
-import Typography from "@mui/material/Typography";
 
 import { styled } from "@mui/material/styles";
 
 import { requestAPI } from "./handler";
 
-import { Color, Page } from "./widget_container";
+import { Page } from "./widget_container";
+
+const showHelp = false;
 
 type powerOptions = {
   [key: string]: string;
 };
+
+const Accordion = styled((props: AccordionProps) => (
+  <MuiAccordion disableGutters elevation={0} square {...props} />
+))(({ theme }) => ({
+  border: `1px solid ${theme.palette.divider}`,
+  "&:not(:last-child)": {
+    marginBottom: "8px"
+  },
+  "&:before": {
+    display: "none"
+  }
+}));
+
+const AccordionSummary = styled((props: AccordionSummaryProps) => (
+  <MuiAccordionSummary
+    expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: "0.9rem" }} />}
+    {...props}
+  />
+))(({ theme }) => ({
+  backgroundColor:
+    theme.palette.mode === "dark"
+      ? "rgba(255, 255, 255, .05)"
+      : "rgba(0, 0, 0, .03)",
+  flexDirection: "row-reverse",
+  "& .MuiAccordionSummary-expandIconWrapper.Mui-expanded": {
+    transform: "rotate(90deg)"
+  },
+  "& .MuiAccordionSummary-content": {
+    marginLeft: theme.spacing(1)
+  }
+}));
+
+const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
+  padding: theme.spacing(2),
+  borderTop: "1px solid rgba(0, 0, 0, .125)"
+}));
 
 export const Config = (props: any): JSX.Element => {
   const [voltages, setVoltages] = useState<powerOptions>({
@@ -83,9 +122,7 @@ export const Config = (props: any): JSX.Element => {
     setDoReflash(event.target.checked);
   };
 
-  const handleDoneButtonClick = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => {
+  const handleDoneButtonClick = () => {
     props.testRepo.settings.reflash = {};
     props.testRepo.settings.reflash["enable"] = doReflash;
     if (doReflash) {
@@ -140,126 +177,180 @@ export const Config = (props: any): JSX.Element => {
 
   return (
     <>
-      <Box sx={{ width: props.width + "px" }}>
-        <Typography variant="h5" sx={{ height: "50px", textAlign: "center" }}>
-          {props.partNumber} Production Tests
-        </Typography>
-        <Box sx={{ height: "25px" }}>
-          <Typography sx={{ textAlign: "center" }}>
-            Edit Test Configuration
+      <Stack spacing={2}>
+        <Box
+          sx={{
+            width: props.dimensions.width + "px",
+            height: props.dimensions.heightTitle + "px",
+            position: "relative",
+            bgcolor: "section.main"
+          }}
+        >
+          <Typography
+            variant="h5"
+            sx={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)"
+            }}
+          >
+            {props.partNumber} Production Tests
           </Typography>
+          {showHelp && (
+            <Button
+              variant="text"
+              sx={{
+                position: "absolute",
+                top: "50%",
+                left: "16px",
+                transform: "translate(0%, -50%)"
+              }}
+            >
+              <Typography variant="body2" sx={{ textDecoration: "underline" }}>
+                Help
+              </Typography>
+            </Button>
+          )}
         </Box>
         <Box
           sx={{
-            height: props.height + "px",
-            boxSizing: "border-box",
-            border: 1,
-            borderRadius: 1,
-            borderColor: Color.grey,
-            padding: "8px",
-            overflow: "auto"
+            width: props.dimensions.width + "px",
+            height: props.dimensions.heightContent + "px",
+            position: "relative",
+            bgcolor: "section.main",
+            display: "flex",
+            flexDirection: "column"
           }}
         >
-          <Accordion>
-            <AccordionSummary expandIcon={<ExpandMore />}>
-              <Typography sx={{ width: "25%", flexShrink: 0 }}>
-                Voltages
-              </Typography>
-              <Typography sx={{ paddingLeft: "4px", color: "text.secondary" }}>
-                {JSON.stringify(voltages)
-                  .replace(/:/g, ": ")
-                  .replace(/"|{|}/g, "")
-                  .replace(/,/g, ", ")}
-              </Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <Stack justifyContent="center" spacing={2} direction="row">
-                {["VDDL", "VDDH", "VDD12", "VBUS"].map((voltage) => (
-                  <FormControl
-                    key={voltage}
-                    variant="outlined"
-                    sx={{ width: "25%" }}
-                  >
-                    <InputLabel htmlFor="voltage-input">{voltage}</InputLabel>
-                    <OutlinedInput
-                      id="voltage-input"
-                      label={voltage}
-                      value={voltages[voltage]}
-                      onChange={(event) =>
-                        handleInputChange(voltage, event.target.value)
-                      }
-                      endAdornment={
-                        <InputAdornment position="end">
-                          <Typography>mv</Typography>
-                        </InputAdornment>
-                      }
-                    />
-                  </FormControl>
-                ))}
-              </Stack>
-            </AccordionDetails>
-          </Accordion>
-          <Accordion>
-            <AccordionSummary expandIcon={<ExpandMore />}>
-              <Typography sx={{ width: "25%", flexShrink: 0 }}>
-                Reflash
-              </Typography>
-              <Typography sx={{ paddingLeft: "4px", color: "text.secondary" }}>
-                {doReflash ? "Enabled" : "Disabled"}
-              </Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <Stack spacing={2} direction="column">
-                <Switch onChange={handleSwitchChange} checked={doReflash} />
-                {doReflash && (
-                  <>
-                    <label htmlFor="button-reflash-image">
-                      <Input
-                        id="button-reflash-image"
-                        type="file"
-                        accept=".img"
-                        onChange={(event) => handleSelectedFile(event)}
+          <div style={{ margin: "24px auto 0px auto" }}>
+            <Typography>Edit Test Configuration</Typography>
+          </div>
+          <div style={{ margin: "24px", overflow: "auto" }}>
+            <Accordion>
+              <AccordionSummary expandIcon={<ExpandMore />}>
+                <Typography sx={{ width: "25%", flexShrink: 0 }}>
+                  Voltages
+                </Typography>
+                <Typography
+                  sx={{ paddingLeft: "4px", color: "text.secondary" }}
+                >
+                  {JSON.stringify(voltages)
+                    .replace(/:/g, ": ")
+                    .replace(/"|{|}/g, "")
+                    .replace(/,/g, ", ")}
+                </Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <Stack justifyContent="center" spacing={2} direction="row">
+                  {["VDDL", "VDDH", "VDD12", "VBUS"].map((voltage) => (
+                    <FormControl
+                      key={voltage}
+                      variant="outlined"
+                      sx={{ width: "25%" }}
+                    >
+                      <InputLabel htmlFor="webds_production_tests_config_voltage_input">
+                        {voltage}
+                      </InputLabel>
+                      <OutlinedInput
+                        id="webds_production_tests_config_voltage_input"
+                        label={voltage}
+                        value={voltages[voltage]}
+                        onChange={(event) =>
+                          handleInputChange(voltage, event.target.value)
+                        }
+                        endAdornment={
+                          <InputAdornment position="end">
+                            <Typography>mv</Typography>
+                          </InputAdornment>
+                        }
                       />
-                      <Button
-                        component="span"
-                        sx={{ width: "100px", marginRight: "25px" }}
-                      >
-                        Image
-                      </Button>
-                      <TextField
-                        id="file-reflash-image"
-                        defaultValue=""
-                        value={image}
-                        error={imgErr}
-                        InputProps={{ readOnly: true }}
-                        variant="standard"
-                        onChange={(event) => setImage(event.target.value)}
-                        sx={{ width: "500px" }}
-                      />
-                    </label>
-                  </>
-                )}
-              </Stack>
-            </AccordionDetails>
-          </Accordion>
+                    </FormControl>
+                  ))}
+                </Stack>
+              </AccordionDetails>
+            </Accordion>
+            <Accordion>
+              <AccordionSummary expandIcon={<ExpandMore />}>
+                <Typography sx={{ width: "25%", flexShrink: 0 }}>
+                  Reflash
+                </Typography>
+                <Typography
+                  sx={{ paddingLeft: "4px", color: "text.secondary" }}
+                >
+                  {doReflash ? "Enabled" : "Disabled"}
+                </Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <Stack spacing={2} direction="column">
+                  <Switch onChange={handleSwitchChange} checked={doReflash} />
+                  {doReflash && (
+                    <>
+                      <label htmlFor="webds_production_tests_config_reflash_input">
+                        <Input
+                          id="webds_production_tests_config_reflash_input"
+                          type="file"
+                          accept=".img"
+                          onChange={(event) => handleSelectedFile(event)}
+                        />
+                        <Button
+                          component="span"
+                          sx={{ width: "100px", marginRight: "24px" }}
+                        >
+                          Image
+                        </Button>
+                        <TextField
+                          variant="standard"
+                          defaultValue=""
+                          value={image}
+                          error={imgErr}
+                          InputProps={{ readOnly: true }}
+                          onChange={(event) => setImage(event.target.value)}
+                          sx={{
+                            width:
+                              props.dimensions.width -
+                              24 * 2 -
+                              1 * 2 -
+                              16 * 2 -
+                              100 -
+                              24 +
+                              "px"
+                          }}
+                        />
+                      </label>
+                    </>
+                  )}
+                </Stack>
+              </AccordionDetails>
+            </Accordion>
+          </div>
         </Box>
-        <div
-          style={{
-            marginTop: "20px",
+        <Box
+          sx={{
+            width: props.dimensions.width + "px",
+            minHeight: props.dimensions.heightControls + "px",
             position: "relative",
+            bgcolor: "section.main",
             display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
             justifyContent: "center"
           }}
         >
-          <Button
-            disabled={imgErr}
-            onClick={(event) => handleDoneButtonClick(event)}
-            sx={{ width: "100px" }}
+          <div
+            style={{
+              margin: "24px"
+            }}
           >
-            Done
-          </Button>
-        </div>
-      </Box>
+            <Button
+              onClick={() => handleDoneButtonClick()}
+              sx={{ width: "150px" }}
+            >
+              Done
+            </Button>
+          </div>
+        </Box>
+      </Stack>
     </>
   );
 };

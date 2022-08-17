@@ -2,16 +2,18 @@ import React, { useEffect, useState } from "react";
 
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-
+import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 
-import { Color, Page } from "./widget_container";
+import { Page } from "./widget_container";
 
 import { requestAPI } from "./handler";
 
 const DEFAULT_TEST_SET_ID = "all";
 
 const SSE_CLOSED = 2;
+
+const showHelp = false;
 
 let totalTests = 0;
 
@@ -24,11 +26,6 @@ export const Progress = (props: any): JSX.Element => {
   const [progress, setProgress] = useState(0);
   const [testName, setTestName] = useState("");
 
-  const errorHandler = (error: any) => {
-    removeEvent();
-    console.error(`Error - GET /webds/production-tests\n${error}`);
-  };
-
   const eventHandler = (event: any) => {
     const data = JSON.parse(event.data);
     const index = parseInt(data.index, 10);
@@ -39,18 +36,25 @@ export const Progress = (props: any): JSX.Element => {
       setCurrent(index);
       setProgress(Math.floor((index / totalTests) * 100));
     } else if (data.status === "done" && data.result === "failed") {
-      removeEvent();
+      eventSource!.removeEventListener("production-tests", eventHandler, false);
+      eventSource!.close();
+      eventSource = undefined;
       props.commitFailedTestName(name);
       props.changePage(Page.Failure);
     }
   };
 
   const removeEvent = () => {
-    if (eventSource && eventSource.readyState != SSE_CLOSED) {
+    if (eventSource && eventSource.readyState !== SSE_CLOSED) {
       eventSource.removeEventListener("production-tests", eventHandler, false);
       eventSource.close();
       eventSource = undefined;
     }
+  };
+
+  const errorHandler = (error: any) => {
+    removeEvent();
+    console.error(`Error - GET /webds/production-tests\n${error}`);
   };
 
   const addEvent = () => {
@@ -61,7 +65,7 @@ export const Progress = (props: any): JSX.Element => {
     eventSource.addEventListener("production-tests", eventHandler, false);
     eventSource.addEventListener("error", errorHandler, false);
     eventSource.onmessage = function (event) {
-      if (event.lastEventId == "finished") {
+      if (event.lastEventId === "finished") {
         removeEvent();
         setTimeout(() => {
           setPass(true);
@@ -70,37 +74,33 @@ export const Progress = (props: any): JSX.Element => {
     };
   };
 
-  const runTests = async (testSetID: string): Promise<void> => {
-    const dataToSend = { test: testSetID };
-    try {
-      await requestAPI<any>("production-tests/" + props.fullPartNumber, {
-        body: JSON.stringify(dataToSend),
-        method: "POST"
-      });
-      addEvent();
-    } catch (error) {
-      console.error(
-        `Error - POST /webds/production-tests/${props.fullPartNumber}\n${error}`
-      );
-      return Promise.reject("Failed to run tests");
-    }
-    return Promise.resolve();
-  };
-
-  const handleDoneButtonClick = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => {
+  const handleDoneButtonClick = () => {
     props.changePage(Page.Landing);
   };
 
-  const handleAbortButtonClick = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => {
+  const handleAbortButtonClick = () => {
     removeEvent();
     props.changePage(Page.Landing);
   };
 
   useEffect(() => {
+    const runTests = async (testSetID: string): Promise<void> => {
+      const dataToSend = { test: testSetID };
+      try {
+        await requestAPI<any>("production-tests/" + props.fullPartNumber, {
+          body: JSON.stringify(dataToSend),
+          method: "POST"
+        });
+        addEvent();
+      } catch (error) {
+        console.error(
+          `Error - POST /webds/production-tests/${props.fullPartNumber}\n${error}`
+        );
+        return Promise.reject("Failed to run tests");
+      }
+      return Promise.resolve();
+    };
+
     if (props.selectedTestSetID === DEFAULT_TEST_SET_ID) {
       totalTests = [...props.testRepo.common, ...props.testRepo.lib].length;
     } else {
@@ -115,54 +115,86 @@ export const Progress = (props: any): JSX.Element => {
 
   return (
     <>
-      <Box sx={{ width: props.width + "px" }}>
-        <Typography variant="h5" sx={{ height: "50px", textAlign: "center" }}>
-          {props.partNumber} Production Tests
-        </Typography>
-        <Box sx={{ height: "25px" }}>
-          {pass ? null : (
-            <Typography sx={{ textAlign: "center" }}>{testName}</Typography>
-          )}
-        </Box>
-        <div style={{ position: "relative" }}>
-          <Box
+      <Stack spacing={2}>
+        <Box
+          sx={{
+            width: props.dimensions.width + "px",
+            height: props.dimensions.heightTitle + "px",
+            position: "relative",
+            bgcolor: "section.main"
+          }}
+        >
+          <Typography
+            variant="h5"
             sx={{
-              height: props.height + "px",
-              border: 1,
-              borderRadius: 1,
-              borderColor: Color.grey,
-              backgroundColor: Color.white
-            }}
-          />
-          <div
-            style={{
               position: "absolute",
-              top: 1,
-              bottom: 0,
-              left: 1,
-              right: 0
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)"
             }}
           >
-            <Box
+            {props.partNumber} Production Tests
+          </Typography>
+          {showHelp && (
+            <Button
+              variant="text"
               sx={{
-                width: Math.floor(((props.width - 2) * progress) / 100) + "px",
-                height: props.height + "px",
-                border: 0,
-                borderRadius: 0,
-                backgroundColor: Color.green
+                position: "absolute",
+                top: "50%",
+                left: "16px",
+                transform: "translate(0%, -50%)"
               }}
-            />
-          </div>
+            >
+              <Typography variant="body2" sx={{ textDecoration: "underline" }}>
+                Help
+              </Typography>
+            </Button>
+          )}
+        </Box>
+        <Box
+          sx={{
+            width: props.dimensions.width + "px",
+            height: props.dimensions.heightContent + "px",
+            position: "relative",
+            bgcolor: "section.main"
+          }}
+        >
           <div
             style={{
               position: "absolute",
               top: 0,
               bottom: 0,
               left: 0,
-              right: 0,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center"
+              right: 0
+            }}
+          >
+            <Box
+              sx={{
+                width:
+                  Math.floor((props.dimensions.width * progress) / 100) + "px",
+                height: props.dimensions.heightContent + "px",
+                backgroundColor: "colors.green"
+              }}
+            />
+          </div>
+          {pass ? null : (
+            <div
+              style={{
+                position: "absolute",
+                top: "24px",
+                left: "50%",
+                transform: "translate(-50%)"
+              }}
+            >
+              <Typography sx={{ color: "black" }}>{testName}</Typography>
+            </div>
+          )}
+          <div
+            style={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)"
             }}
           >
             {pass ? (
@@ -175,46 +207,52 @@ export const Progress = (props: any): JSX.Element => {
               </Typography>
             )}
           </div>
-        </div>
-        <div
-          style={{
-            marginTop: "20px",
+        </Box>
+        <Box
+          sx={{
+            width: props.dimensions.width + "px",
+            minHeight: props.dimensions.heightControls + "px",
             position: "relative",
+            bgcolor: "section.main",
             display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
             justifyContent: "center"
           }}
         >
-          {pass ? (
-            <Button
-              onClick={(event) => handleDoneButtonClick(event)}
-              sx={{ width: "100px" }}
-            >
-              Done
-            </Button>
-          ) : (
-            <Button
-              onClick={(event) => handleAbortButtonClick(event)}
-              sx={{ width: "100px" }}
-            >
-              Abort
-            </Button>
-          )}
+          <div style={{ margin: "24px" }}>
+            {pass ? (
+              <Button
+                onClick={() => handleDoneButtonClick()}
+                sx={{ width: "150px" }}
+              >
+                Done
+              </Button>
+            ) : (
+              <Button
+                onClick={() => handleAbortButtonClick()}
+                sx={{ width: "150px" }}
+              >
+                Abort
+              </Button>
+            )}
+          </div>
           <Button
             variant="text"
             onClick={props.showLog}
             sx={{
               position: "absolute",
-              top: "5px",
-              right: "0px",
-              textTransform: "none"
+              top: "50%",
+              right: "24px",
+              transform: "translate(0%, -50%)"
             }}
           >
             <Typography variant="body2" sx={{ textDecoration: "underline" }}>
               Log
             </Typography>
           </Button>
-        </div>
-      </Box>
+        </Box>
+      </Stack>
     </>
   );
 };

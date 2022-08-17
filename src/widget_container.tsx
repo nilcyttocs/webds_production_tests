@@ -8,8 +8,6 @@ import Alert from "@mui/material/Alert";
 
 import CircularProgress from "@mui/material/CircularProgress";
 
-import { green, grey, red } from "@mui/material/colors";
-
 import { ThemeProvider } from "@mui/material/styles";
 
 import { WebDSService } from "@webds/service";
@@ -20,29 +18,31 @@ import { Edit } from "./widget_edit";
 
 import { Config } from "./widget_config";
 
-import { Failure } from "./widget_failure";
-
 import { Progress } from "./widget_progress";
 
-import { requestAPI } from "./handler";
+import { Failure } from "./widget_failure";
 
-export const Color = {
-  green: green.A400,
-  grey: grey[500],
-  red: red.A700,
-  white: grey[50]
-};
+import { requestAPI } from "./handler";
 
 export enum Page {
   Landing = "LANDING",
   Edit = "EDIT",
   Config = "CONFIG",
-  Failure = "FAILURE",
-  Progress = "PROGRESS"
+  Progress = "PROGRESS",
+  Failure = "FAILURE"
 }
 
 const WIDTH = 800;
-const HEIGHT = 450;
+const HEIGHT_TITLE = 70;
+const HEIGHT_CONTENT = 450;
+const HEIGHT_CONTROLS = 120;
+
+const dimensions = {
+  width: WIDTH,
+  heightTitle: HEIGHT_TITLE,
+  heightContent: HEIGHT_CONTENT,
+  heightControls: HEIGHT_CONTROLS
+};
 
 const logLocation = "Synaptics/_links/Production_Tests_Log";
 
@@ -61,7 +61,6 @@ const ProductionTestsContainer = (props: any): JSX.Element => {
   const [initialized, setInitialized] = useState<boolean>(false);
   const [alert, setAlert] = useState<boolean>(false);
   const [page, setPage] = useState<Page>(Page.Landing);
-  const [marginLeft, setMarginLeft] = useState<number>(0);
   const [partNumber, setPartNumber] = useState<string>("");
   const [fullPartNumber, setFullPartNumber] = useState<string>("");
   const [failedTestName, setFailedTestName] = useState<string>("");
@@ -134,8 +133,7 @@ const ProductionTestsContainer = (props: any): JSX.Element => {
       case Page.Landing:
         return (
           <Landing
-            width={WIDTH}
-            height={HEIGHT}
+            dimensions={dimensions}
             partNumber={partNumber}
             testRepo={testRepo}
             selectedTestSetID={selectedTestSetID}
@@ -147,9 +145,7 @@ const ProductionTestsContainer = (props: any): JSX.Element => {
       case Page.Edit:
         return (
           <Edit
-            width={WIDTH}
-            height={HEIGHT}
-            marginLeft={marginLeft}
+            dimensions={dimensions}
             partNumber={partNumber}
             testRepo={testRepo}
             selectedTestSetID={selectedTestSetID}
@@ -160,8 +156,7 @@ const ProductionTestsContainer = (props: any): JSX.Element => {
       case Page.Config:
         return (
           <Config
-            width={WIDTH}
-            height={HEIGHT}
+            dimensions={dimensions}
             partNumber={partNumber}
             testRepo={testRepo}
             changePage={changePage}
@@ -171,8 +166,7 @@ const ProductionTestsContainer = (props: any): JSX.Element => {
       case Page.Failure:
         return (
           <Failure
-            width={WIDTH}
-            height={HEIGHT}
+            dimensions={dimensions}
             partNumber={partNumber}
             testRepo={testRepo}
             failedTestName={failedTestName}
@@ -183,8 +177,7 @@ const ProductionTestsContainer = (props: any): JSX.Element => {
       case Page.Progress:
         return (
           <Progress
-            width={WIDTH}
-            height={HEIGHT}
+            dimensions={dimensions}
             partNumber={partNumber}
             fullPartNumber={fullPartNumber}
             testRepo={testRepo}
@@ -199,29 +192,43 @@ const ProductionTestsContainer = (props: any): JSX.Element => {
     }
   };
 
-  const initialize = async () => {
-    try {
-      await props.service.packrat.cache.addPrivateConfig();
-    } catch (error) {
-      console.error(error);
-      alertMessage = alertMessagePrivateConfig;
-      setAlert(true);
-      return;
-    }
-    let fpn = "";
-    try {
-      fpn = await props.service.touchcomm.getPartNumber();
-      setFullPartNumber(fpn);
-      setPartNumber(fpn.split("-")[0]);
-    } catch (error) {
-      console.error(error);
-      alertMessage = alertMessageDevicePartNumber;
-      setAlert(true);
-      return;
-    }
-    try {
-      const tr = await requestAPI<any>("production-tests/" + fpn);
-      if (!tr || Object.keys(tr).length === 0) {
+  useEffect(() => {
+    const initialize = async () => {
+      try {
+        await props.service.packrat.cache.addPrivateConfig();
+      } catch (error) {
+        console.error(error);
+        alertMessage = alertMessagePrivateConfig;
+        setAlert(true);
+        return;
+      }
+      let fpn = "";
+      try {
+        fpn = await props.service.touchcomm.getPartNumber();
+        setFullPartNumber(fpn);
+        setPartNumber(fpn.split("-")[0]);
+      } catch (error) {
+        console.error(error);
+        alertMessage = alertMessageDevicePartNumber;
+        setAlert(true);
+        return;
+      }
+      try {
+        const tr = await requestAPI<any>("production-tests/" + fpn);
+        if (!tr || Object.keys(tr).length === 0) {
+          alertMessage =
+            alertMessageTestSetsStart +
+            fpn +
+            ". " +
+            alertMessageTestSetsEnd +
+            fpn +
+            ".";
+          setAlert(true);
+          return;
+        }
+        setTestRepo(tr);
+      } catch (error) {
+        console.error(error);
         alertMessage =
           alertMessageTestSetsStart +
           fpn +
@@ -232,28 +239,8 @@ const ProductionTestsContainer = (props: any): JSX.Element => {
         setAlert(true);
         return;
       }
-      setTestRepo(tr);
-    } catch (error) {
-      console.error(error);
-      alertMessage =
-        alertMessageTestSetsStart +
-        fpn +
-        ". " +
-        alertMessageTestSetsEnd +
-        fpn +
-        ".";
-      setAlert(true);
-      return;
-    }
-    const selector = document.querySelector(".jp-webds-widget-body");
-    if (selector) {
-      const style = getComputedStyle(selector);
-      setMarginLeft(parseInt(style!.marginLeft, 10));
-    }
-    setInitialized(true);
-  };
-
-  useEffect(() => {
+      setInitialized(true);
+    };
     initialize();
   }, []);
 
@@ -266,6 +253,15 @@ const ProductionTestsContainer = (props: any): JSX.Element => {
           displayPage()
         ) : (
           <>
+            {alert && (
+              <Alert
+                severity="error"
+                onClose={() => setAlert(false)}
+                sx={{ whiteSpace: "pre-wrap" }}
+              >
+                {alertMessage}
+              </Alert>
+            )}
             <div
               style={{
                 position: "absolute",
@@ -276,15 +272,6 @@ const ProductionTestsContainer = (props: any): JSX.Element => {
             >
               <CircularProgress color="primary" />
             </div>
-            {alert ? (
-              <Alert
-                severity="error"
-                onClose={() => setAlert(false)}
-                sx={{ whiteSpace: "pre-wrap" }}
-              >
-                {alertMessage}
-              </Alert>
-            ) : null}
           </>
         )}
       </ThemeProvider>

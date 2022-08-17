@@ -2,86 +2,122 @@ import React from "react";
 
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-
+import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 
-import { Color, Page } from "./widget_container";
+import { Page } from "./widget_container";
+
+const showHelp = false;
 
 export const Failure = (props: any): JSX.Element => {
-  const handleDoneButtonClick = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => {
+  const handleDoneButtonClick = () => {
     props.changePage(Page.Landing);
   };
 
   return (
     <>
-      <Box sx={{ width: props.width + "px" }}>
-        <Typography variant="h5" sx={{ height: "50px", textAlign: "center" }}>
-          {props.partNumber} Production Tests
-        </Typography>
-        <Box sx={{ height: "25px" }}>
-          <Typography sx={{ textAlign: "center" }}>
-            {props.failedTestName}
-          </Typography>
-        </Box>
-        <div style={{ position: "relative" }}>
-          <Box
+      <Stack spacing={2}>
+        <Box
+          sx={{
+            width: props.dimensions.width + "px",
+            height: props.dimensions.heightTitle + "px",
+            position: "relative",
+            bgcolor: "section.main"
+          }}
+        >
+          <Typography
+            variant="h5"
             sx={{
-              height: props.height + "px",
-              border: 1,
-              borderRadius: 1,
-              borderColor: Color.grey,
-              backgroundColor: Color.red
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)"
             }}
-          />
+          >
+            {props.partNumber} Production Tests
+          </Typography>
+          {showHelp && (
+            <Button
+              variant="text"
+              sx={{
+                position: "absolute",
+                top: "50%",
+                left: "16px",
+                transform: "translate(0%, -50%)"
+              }}
+            >
+              <Typography variant="body2" sx={{ textDecoration: "underline" }}>
+                Help
+              </Typography>
+            </Button>
+          )}
+        </Box>
+        <Box
+          sx={{
+            width: props.dimensions.width + "px",
+            height: props.dimensions.heightContent + "px",
+            position: "relative",
+            bgcolor: "colors.red",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center"
+          }}
+        >
           <div
             style={{
               position: "absolute",
-              top: 0,
-              bottom: 0,
-              left: 0,
-              right: 0,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center"
+              top: "24px",
+              left: "50%",
+              transform: "translate(-50%)"
             }}
           >
+            <Typography sx={{ color: "black" }}>
+              {props.failedTestName}
+            </Typography>
+          </div>
+          <div style={{ margin: "24px" }}>
             <Typography variant="h1" sx={{ color: "black" }}>
               FAIL
             </Typography>
           </div>
-        </div>
-        <div
-          style={{
-            marginTop: "20px",
+        </Box>
+        <Box
+          sx={{
+            width: props.dimensions.width + "px",
+            minHeight: props.dimensions.heightControls + "px",
             position: "relative",
+            bgcolor: "section.main",
             display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
             justifyContent: "center"
           }}
         >
-          <Button
-            onClick={(event) => handleDoneButtonClick(event)}
-            sx={{ width: "100px" }}
-          >
-            Done
-          </Button>
+          <div style={{ margin: "24px" }}>
+            <Button
+              onClick={() => handleDoneButtonClick()}
+              sx={{ width: "150px" }}
+            >
+              Done
+            </Button>
+          </div>
           <Button
             variant="text"
             onClick={props.showLog}
             sx={{
               position: "absolute",
-              top: "5px",
-              right: "0px",
-              textTransform: "none"
+              top: "50%",
+              right: "24px",
+              transform: "translate(0%, -50%)"
             }}
           >
             <Typography variant="body2" sx={{ textDecoration: "underline" }}>
               Log
             </Typography>
           </Button>
-        </div>
-      </Box>
+        </Box>
+      </Stack>
     </>
   );
 };

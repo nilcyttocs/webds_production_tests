@@ -4,6 +4,9 @@ import { v4 as uuidv4 } from "uuid";
 
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
+
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddBoxIcon from "@mui/icons-material/AddBox";
@@ -18,12 +21,12 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import TextField from "@mui/material/TextField";
 
-import Typography from "@mui/material/Typography";
-
-import { Color, Page } from "./widget_container";
+import { Page } from "./widget_container";
 
 const DEFAULT_TEST_SET_ID = "all";
 const DEFAULT_TEST_SET_NAME = "All";
+
+const showHelp = false;
 
 export const Landing = (props: any): JSX.Element => {
   const [testSets, setTestSets] = useState([]);
@@ -34,40 +37,29 @@ export const Landing = (props: any): JSX.Element => {
     name: "Test Set"
   });
 
-  const handleRunButtonClick = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => {
+  const handleRunButtonClick = () => {
     props.commitSelectedTestSetID(selectedID);
     props.changePage(Page.Progress);
   };
 
-  const handleAddButtonClick = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => {
+  const handleAddButtonClick = () => {
     setTestSetEntry({ id: null, name: "Test Set" });
     setOpenDialog(true);
   };
 
-  const handleDeleteButtonClick = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-    id: string
-  ) => {
+  const handleDeleteButtonClick = (id: string) => {
     const items = testSets.filter((item: any) => item && item.id !== id);
     setTestSets(items);
     props.commitCustomTestSets(items);
     setSelectedID(DEFAULT_TEST_SET_ID);
   };
 
-  const handleEditButtonClick = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => {
+  const handleEditButtonClick = () => {
     props.commitSelectedTestSetID(selectedID);
     props.changePage(Page.Edit);
   };
 
-  const handleConfigButtonClick = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => {
+  const handleConfigButtonClick = () => {
     props.changePage(Page.Config);
   };
 
@@ -117,15 +109,11 @@ export const Landing = (props: any): JSX.Element => {
     handleDialogClose();
   };
 
-  const handleDialogDoneButtonClick = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => {
+  const handleDialogDoneButtonClick = () => {
     handleDialogDone();
   };
 
-  const handleDialogCancelButtonClick = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => {
+  const handleDialogCancelButtonClick = () => {
     handleDialogClose();
   };
 
@@ -159,7 +147,7 @@ export const Landing = (props: any): JSX.Element => {
             <IconButton
               color="error"
               edge="start"
-              onClick={(event) => handleDeleteButtonClick(event, id)}
+              onClick={() => handleDeleteButtonClick(id)}
             >
               <DeleteIcon />
             </IconButton>
@@ -188,7 +176,7 @@ export const Landing = (props: any): JSX.Element => {
     if (props.selectedTestSetID) {
       setSelectedID(props.selectedTestSetID);
     }
-  }, []);
+  }, [props.selectedTestSetID]);
 
   useEffect(() => {
     if (props.testRepo.sets) {
@@ -198,136 +186,193 @@ export const Landing = (props: any): JSX.Element => {
 
   return (
     <>
-      <Box sx={{ width: props.width + "px" }}>
-        <Typography variant="h5" sx={{ height: "50px", textAlign: "center" }}>
-          {props.partNumber} Production Tests
-        </Typography>
-        <Box sx={{ height: "25px" }}>
-          <Typography sx={{ textAlign: "center" }}>Select Test Set</Typography>
+      <Stack spacing={2}>
+        <Box
+          sx={{
+            width: props.dimensions.width + "px",
+            height: props.dimensions.heightTitle + "px",
+            position: "relative",
+            bgcolor: "section.main"
+          }}
+        >
+          <Typography
+            variant="h5"
+            sx={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)"
+            }}
+          >
+            {props.partNumber} Production Tests
+          </Typography>
+          {showHelp && (
+            <Button
+              variant="text"
+              sx={{
+                position: "absolute",
+                top: "50%",
+                left: "16px",
+                transform: "translate(0%, -50%)"
+              }}
+            >
+              <Typography variant="body2" sx={{ textDecoration: "underline" }}>
+                Help
+              </Typography>
+            </Button>
+          )}
         </Box>
         <Box
           sx={{
-            height: props.height + "px",
-            boxSizing: "border-box",
-            border: 1,
-            borderRadius: 1,
-            borderColor: Color.grey,
-            padding: "8px",
-            overflow: "auto"
+            width: props.dimensions.width + "px",
+            height: props.dimensions.heightContent + "px",
+            position: "relative",
+            bgcolor: "section.main",
+            display: "flex",
+            flexDirection: "column"
           }}
         >
-          <List sx={{ padding: "0px" }}>
-            <ListItem key={DEFAULT_TEST_SET_ID} divider>
-              <ListItemButton
-                selected={selectedID === DEFAULT_TEST_SET_ID}
-                onClick={(event) =>
-                  handleListItemClick(
-                    event,
-                    DEFAULT_TEST_SET_ID,
-                    DEFAULT_TEST_SET_NAME
-                  )
-                }
-                sx={{ padding: "0px 16px" }}
-              >
-                <ListItemText primary={DEFAULT_TEST_SET_NAME} />
-              </ListItemButton>
-            </ListItem>
-            {generateListItems()}
-          </List>
-          <IconButton
-            id="addTestSetButton"
-            color="primary"
-            onClick={(event) => handleAddButtonClick(event)}
-            sx={{ marginTop: "15px", marginLeft: "30px" }}
+          <div
+            style={{
+              margin: "24px auto 0px auto"
+            }}
           >
-            <AddBoxIcon />
-          </IconButton>
-          <Dialog open={openDialog} onClose={handleDialogClose}>
-            <DialogContent>
-              <TextField
-                autoFocus
-                fullWidth
-                label="Name of Test Set"
-                value={testSetEntry.name}
-                type="text"
-                variant="standard"
-                InputLabelProps={{
-                  shrink: true
-                }}
-                onChange={handleTextFieldChange}
-                onKeyDown={handleTextFieldKeyDown}
-              />
-            </DialogContent>
-            <DialogActions>
-              <Button
-                onClick={(event) => handleDialogDoneButtonClick(event)}
-                sx={{ width: "75px" }}
+            <Typography>Select Test Set</Typography>
+          </div>
+          <div
+            style={{
+              margin: "24px",
+              overflow: "auto"
+            }}
+          >
+            <List sx={{ padding: "0px" }}>
+              <ListItem key={DEFAULT_TEST_SET_ID} divider>
+                <ListItemButton
+                  selected={selectedID === DEFAULT_TEST_SET_ID}
+                  onClick={(event) =>
+                    handleListItemClick(
+                      event,
+                      DEFAULT_TEST_SET_ID,
+                      DEFAULT_TEST_SET_NAME
+                    )
+                  }
+                  sx={{ padding: "0px 16px" }}
+                >
+                  <ListItemText primary={DEFAULT_TEST_SET_NAME} />
+                </ListItemButton>
+              </ListItem>
+              {generateListItems()}
+            </List>
+            <Stack justifyContent="center" direction="row">
+              <IconButton
+                id="addTestSetButton"
+                color="primary"
+                onClick={() => handleAddButtonClick()}
+                sx={{ marginTop: "8px" }}
               >
-                Done
-              </Button>
-              <Button
-                onClick={(event) => handleDialogCancelButtonClick(event)}
-                sx={{ width: "75px" }}
-              >
-                Cancel
-              </Button>
-            </DialogActions>
-          </Dialog>
+                <AddBoxIcon />
+              </IconButton>
+            </Stack>
+          </div>
         </Box>
-        <div
-          style={{
-            marginTop: "20px",
+        <Box
+          sx={{
+            width: props.dimensions.width + "px",
+            minHeight: props.dimensions.heightControls + "px",
             position: "relative",
+            bgcolor: "section.main",
             display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
             justifyContent: "center"
           }}
         >
+          <div style={{ margin: "24px" }}>
+            <Button
+              onClick={() => handleRunButtonClick()}
+              sx={{ width: "150px" }}
+            >
+              Run
+            </Button>
+            <Button
+              variant="text"
+              onClick={() => handleConfigButtonClick()}
+              sx={{
+                position: "absolute",
+                top: "50%",
+                left: "24px",
+                transform: "translate(0%, -50%)"
+              }}
+            >
+              <Typography variant="body2" sx={{ textDecoration: "underline" }}>
+                Config
+              </Typography>
+            </Button>
+            <Button
+              variant="text"
+              disabled={selectedID === DEFAULT_TEST_SET_ID}
+              onClick={() => handleEditButtonClick()}
+              sx={{
+                position: "absolute",
+                top: "50%",
+                right: "24px",
+                transform: "translate(0%, -50%)"
+              }}
+            >
+              {selectedID === DEFAULT_TEST_SET_ID ? (
+                <Typography
+                  variant="body2"
+                  sx={{ color: "colors.grey", textDecoration: "underline" }}
+                >
+                  Edit
+                </Typography>
+              ) : (
+                <Typography
+                  variant="body2"
+                  sx={{ textDecoration: "underline" }}
+                >
+                  Edit
+                </Typography>
+              )}
+            </Button>
+          </div>
+        </Box>
+      </Stack>
+      <Dialog
+        fullWidth
+        maxWidth="xs"
+        open={openDialog}
+        onClose={handleDialogClose}
+      >
+        <DialogContent>
+          <TextField
+            fullWidth
+            variant="standard"
+            label="Name of Test Set"
+            type="text"
+            value={testSetEntry.name}
+            onChange={handleTextFieldChange}
+            onKeyDown={handleTextFieldKeyDown}
+            InputLabelProps={{
+              shrink: true
+            }}
+          />
+        </DialogContent>
+        <DialogActions>
           <Button
-            onClick={(event) => handleRunButtonClick(event)}
+            onClick={() => handleDialogCancelButtonClick()}
             sx={{ width: "100px" }}
           >
-            Run
+            Cancel
           </Button>
           <Button
-            variant="text"
-            onClick={(event) => handleConfigButtonClick(event)}
-            sx={{
-              position: "absolute",
-              top: "5px",
-              left: "0px",
-              textTransform: "none"
-            }}
+            onClick={() => handleDialogDoneButtonClick()}
+            sx={{ width: "100px" }}
           >
-            <Typography variant="body2" sx={{ textDecoration: "underline" }}>
-              Config
-            </Typography>
+            Done
           </Button>
-          <Button
-            variant="text"
-            disabled={selectedID === DEFAULT_TEST_SET_ID}
-            onClick={(event) => handleEditButtonClick(event)}
-            sx={{
-              position: "absolute",
-              top: "5px",
-              right: "0px",
-              textTransform: "none"
-            }}
-          >
-            {selectedID === DEFAULT_TEST_SET_ID ? (
-              <Typography
-                variant="body2"
-                sx={{ color: Color.grey, textDecoration: "underline" }}
-              >
-                Edit
-              </Typography>
-            ) : (
-              <Typography variant="body2" sx={{ textDecoration: "underline" }}>
-                Edit
-              </Typography>
-            )}
-          </Button>
-        </div>
-      </Box>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };
