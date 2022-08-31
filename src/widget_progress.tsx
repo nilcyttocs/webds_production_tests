@@ -111,6 +111,9 @@ export const Progress = (props: any): JSX.Element => {
     }
     setTotal(totalTests);
     runTests(props.selectedTestSetID);
+    return () => {
+      removeEvent();
+    };
   }, []);
 
   return (
