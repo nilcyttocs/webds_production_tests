@@ -197,9 +197,7 @@ const ProductionTestsContainer = (props: any): JSX.Element => {
 
   useEffect(() => {
     const initialize = async () => {
-      const external = props.service.pinormos
-        .getOSInfo()
-        .current.version.endsWith("E");
+      const external = props.service.pinormos.isExternal();
       try {
         if (external) {
           await props.service.packrat.cache.addPublicConfig();
