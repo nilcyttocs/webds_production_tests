@@ -156,7 +156,7 @@ export const Landing = (props: any): JSX.Element => {
           <ListItemButton
             selected={selectedID === id}
             onClick={(event) => handleListItemClick(event, id, name)}
-            sx={{ marginRight: "15px", padding: "0px 16px" }}
+            sx={{ marginRight: "16px", padding: "0px 16px" }}
           >
             <ListItemText primary={name} />
           </ListItemButton>
