@@ -1,28 +1,22 @@
 import React, { useEffect, useState } from "react";
 
-import { JupyterFrontEnd } from "@jupyterlab/application";
-
-import { ReactWidget } from "@jupyterlab/apputils";
-
 import Alert from "@mui/material/Alert";
 
 import CircularProgress from "@mui/material/CircularProgress";
 
 import { ThemeProvider } from "@mui/material/styles";
 
-import { WebDSService } from "@webds/service";
+import Config from "./Config";
 
-import { Landing } from "./widget_landing";
+import Edit from "./Edit";
 
-import { Edit } from "./widget_edit";
+import Failure from "./Failure";
 
-import { Config } from "./widget_config";
+import Landing from "./Landing";
 
-import { Progress } from "./widget_progress";
+import Progress from "./Progress";
 
-import { Failure } from "./widget_failure";
-
-import { requestAPI } from "./handler";
+import { requestAPI } from "../handler";
 
 export enum Page {
   Landing = "LANDING",
@@ -60,7 +54,7 @@ const alertMessageTestSetsStart = "Failed to retrieve test sets for ";
 
 const alertMessageTestSetsEnd = "Production tests not currently available for ";
 
-const ProductionTestsContainer = (props: any): JSX.Element => {
+export const ProductionTestsComponent = (props: any): JSX.Element => {
   const [initialized, setInitialized] = useState<boolean>(false);
   const [alert, setAlert] = useState<boolean>(false);
   const [page, setPage] = useState<Page>(Page.Landing);
@@ -290,30 +284,4 @@ const ProductionTestsContainer = (props: any): JSX.Element => {
   );
 };
 
-export class ProductionTestsWidget extends ReactWidget {
-  id: string;
-  frontend: JupyterFrontEnd;
-  service: WebDSService;
-
-  constructor(id: string, app: JupyterFrontEnd, service: WebDSService) {
-    super();
-    this.id = id;
-    this.frontend = app;
-    this.service = service;
-  }
-
-  render(): JSX.Element {
-    return (
-      <div id={this.id + "_container"} className="jp-webds-widget-container">
-        <div id={this.id + "_content"} className="jp-webds-widget">
-          <ProductionTestsContainer
-            frontend={this.frontend}
-            service={this.service}
-          />
-        </div>
-        <div className="jp-webds-widget-shadow jp-webds-widget-shadow-top"></div>
-        <div className="jp-webds-widget-shadow jp-webds-widget-shadow-bottom"></div>
-      </div>
-    );
-  }
-}
+export default ProductionTestsComponent;

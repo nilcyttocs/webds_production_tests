@@ -5,9 +5,9 @@ import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 
-import { Page } from "./widget_container";
+import { Page } from "./ProductionTestsComponent";
 
-import { requestAPI } from "./handler";
+import { requestAPI } from "../handler";
 
 const DEFAULT_TEST_SET_ID = "all";
 
@@ -259,3 +259,5 @@ export const Progress = (props: any): JSX.Element => {
     </>
   );
 };
+
+export default Progress;

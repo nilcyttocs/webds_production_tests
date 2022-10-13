@@ -21,9 +21,9 @@ import TextField from "@mui/material/TextField";
 
 import { styled } from "@mui/material/styles";
 
-import { requestAPI } from "./handler";
+import { Page } from "./ProductionTestsComponent";
 
-import { Page } from "./widget_container";
+import { requestAPI } from "../handler";
 
 const showHelp = false;
 
@@ -354,3 +354,5 @@ export const Config = (props: any): JSX.Element => {
     </>
   );
 };
+
+export default Config;

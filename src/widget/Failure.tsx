@@ -5,7 +5,7 @@ import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 
-import { Page } from "./widget_container";
+import { Page } from "./ProductionTestsComponent";
 
 const showHelp = false;
 
@@ -121,3 +121,5 @@ export const Failure = (props: any): JSX.Element => {
     </>
   );
 };
+
+export default Failure;

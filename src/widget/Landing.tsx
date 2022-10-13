@@ -21,7 +21,7 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import TextField from "@mui/material/TextField";
 
-import { Page } from "./widget_container";
+import { Page } from "./ProductionTestsComponent";
 
 const DEFAULT_TEST_SET_ID = "all";
 const DEFAULT_TEST_SET_NAME = "All";
@@ -376,3 +376,5 @@ export const Landing = (props: any): JSX.Element => {
     </>
   );
 };
+
+export default Landing;

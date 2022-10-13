@@ -12,7 +12,7 @@ import { WebDSService, WebDSWidget } from "@webds/service";
 
 import { productionTestsIcon } from "./icons";
 
-import { ProductionTestsWidget } from "./widget_container";
+import ProductionTestsWidget from "./widget/ProductionTestsWidget";
 
 namespace Attributes {
   export const command = "webds_production_tests:open";

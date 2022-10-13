@@ -17,7 +17,7 @@ import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 
-import { Page } from "./widget_container";
+import { Page } from "./ProductionTestsComponent";
 
 const showHelp = false;
 
@@ -405,3 +405,5 @@ export const Edit = (props: any): JSX.Element => {
     </>
   );
 };
+
+export default Edit;
