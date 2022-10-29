@@ -124,7 +124,7 @@ export const Progress = (props: any): JSX.Element => {
             width: props.dimensions.width + "px",
             height: props.dimensions.heightTitle + "px",
             position: "relative",
-            bgcolor: "section.main"
+            bgcolor: "section.background"
           }}
         >
           <Typography
@@ -148,9 +148,7 @@ export const Progress = (props: any): JSX.Element => {
                 transform: "translate(0%, -50%)"
               }}
             >
-              <Typography variant="body2" sx={{ textDecoration: "underline" }}>
-                Help
-              </Typography>
+              <Typography variant="underline">Help</Typography>
             </Button>
           )}
         </Box>
@@ -159,7 +157,7 @@ export const Progress = (props: any): JSX.Element => {
             width: props.dimensions.width + "px",
             height: props.dimensions.heightContent + "px",
             position: "relative",
-            bgcolor: "section.main"
+            bgcolor: "section.background"
           }}
         >
           <div
@@ -176,7 +174,7 @@ export const Progress = (props: any): JSX.Element => {
                 width:
                   Math.floor((props.dimensions.width * progress) / 100) + "px",
                 height: props.dimensions.heightContent + "px",
-                backgroundColor: "colors.green"
+                backgroundColor: "custom.green"
               }}
             />
           </div>
@@ -216,7 +214,7 @@ export const Progress = (props: any): JSX.Element => {
             width: props.dimensions.width + "px",
             minHeight: props.dimensions.heightControls + "px",
             position: "relative",
-            bgcolor: "section.main",
+            bgcolor: "section.background",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
@@ -250,9 +248,7 @@ export const Progress = (props: any): JSX.Element => {
               transform: "translate(0%, -50%)"
             }}
           >
-            <Typography variant="body2" sx={{ textDecoration: "underline" }}>
-              Log
-            </Typography>
+            <Typography variant="underline">Log</Typography>
           </Button>
         </Box>
       </Stack>

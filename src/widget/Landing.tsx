@@ -21,6 +21,8 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import TextField from "@mui/material/TextField";
 
+import { useTheme } from "@mui/material/styles";
+
 import { Page } from "./ProductionTestsComponent";
 
 const DEFAULT_TEST_SET_ID = "all";
@@ -36,6 +38,8 @@ export const Landing = (props: any): JSX.Element => {
     id: null,
     name: "Test Set"
   });
+
+  const theme = useTheme();
 
   const handleRunButtonClick = () => {
     props.commitSelectedTestSetID(selectedID);
@@ -192,7 +196,7 @@ export const Landing = (props: any): JSX.Element => {
             width: props.dimensions.width + "px",
             height: props.dimensions.heightTitle + "px",
             position: "relative",
-            bgcolor: "section.main"
+            bgcolor: "section.background"
           }}
         >
           <Typography
@@ -216,9 +220,7 @@ export const Landing = (props: any): JSX.Element => {
                 transform: "translate(0%, -50%)"
               }}
             >
-              <Typography variant="body2" sx={{ textDecoration: "underline" }}>
-                Help
-              </Typography>
+              <Typography variant="underline">Help</Typography>
             </Button>
           )}
         </Box>
@@ -227,7 +229,7 @@ export const Landing = (props: any): JSX.Element => {
             width: props.dimensions.width + "px",
             height: props.dimensions.heightContent + "px",
             position: "relative",
-            bgcolor: "section.main",
+            bgcolor: "section.background",
             display: "flex",
             flexDirection: "column"
           }}
@@ -280,7 +282,7 @@ export const Landing = (props: any): JSX.Element => {
             width: props.dimensions.width + "px",
             minHeight: props.dimensions.heightControls + "px",
             position: "relative",
-            bgcolor: "section.main",
+            bgcolor: "section.background",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
@@ -304,9 +306,7 @@ export const Landing = (props: any): JSX.Element => {
                 transform: "translate(0%, -50%)"
               }}
             >
-              <Typography variant="body2" sx={{ textDecoration: "underline" }}>
-                Config
-              </Typography>
+              <Typography variant="underline">Config</Typography>
             </Button>
             <Button
               variant="text"
@@ -319,21 +319,17 @@ export const Landing = (props: any): JSX.Element => {
                 transform: "translate(0%, -50%)"
               }}
             >
-              {selectedID === DEFAULT_TEST_SET_ID ? (
-                <Typography
-                  variant="body2"
-                  sx={{ color: "colors.grey", textDecoration: "underline" }}
-                >
-                  Edit
-                </Typography>
-              ) : (
-                <Typography
-                  variant="body2"
-                  sx={{ textDecoration: "underline" }}
-                >
-                  Edit
-                </Typography>
-              )}
+              <Typography
+                variant="underline"
+                sx={{
+                  color:
+                    selectedID === DEFAULT_TEST_SET_ID
+                      ? theme.palette.text.disabled
+                      : theme.palette.text.primary
+                }}
+              >
+                Edit
+              </Typography>
             </Button>
           </div>
         </Box>

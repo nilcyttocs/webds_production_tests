@@ -86,17 +86,15 @@ export const Config = (props: any): JSX.Element => {
     if (value !== "" && isNaN(Number(value))) {
       return;
     }
-    const num = parseInt(value, 10);
-    if (isNaN(num) || num <= 4000) {
-      const newVoltages: powerOptions = Object.assign({}, voltages);
-      if (value === "" || value === "00") {
-        value = "0";
-      } else if (value !== "0") {
-        value = value.replace(/^0+/, "");
+    const newVoltages: powerOptions = Object.assign({}, voltages);
+    if (value !== "") {
+      const num = parseInt(value, 10);
+      if (num > 4000) {
+        return;
       }
-      newVoltages[item] = value;
-      setVoltages(newVoltages);
     }
+    newVoltages[item] = value;
+    setVoltages(newVoltages);
   };
 
   const uploadImage = async (file: File) => {
@@ -183,7 +181,7 @@ export const Config = (props: any): JSX.Element => {
             width: props.dimensions.width + "px",
             height: props.dimensions.heightTitle + "px",
             position: "relative",
-            bgcolor: "section.main"
+            bgcolor: "section.background"
           }}
         >
           <Typography
@@ -207,9 +205,7 @@ export const Config = (props: any): JSX.Element => {
                 transform: "translate(0%, -50%)"
               }}
             >
-              <Typography variant="body2" sx={{ textDecoration: "underline" }}>
-                Help
-              </Typography>
+              <Typography variant="underline">Help</Typography>
             </Button>
           )}
         </Box>
@@ -218,7 +214,7 @@ export const Config = (props: any): JSX.Element => {
             width: props.dimensions.width + "px",
             height: props.dimensions.heightContent + "px",
             position: "relative",
-            bgcolor: "section.main",
+            bgcolor: "section.background",
             display: "flex",
             flexDirection: "column"
           }}
@@ -330,7 +326,7 @@ export const Config = (props: any): JSX.Element => {
             width: props.dimensions.width + "px",
             minHeight: props.dimensions.heightControls + "px",
             position: "relative",
-            bgcolor: "section.main",
+            bgcolor: "section.background",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
@@ -343,6 +339,7 @@ export const Config = (props: any): JSX.Element => {
             }}
           >
             <Button
+              disabled={Object.values(voltages).includes("") || imgErr}
               onClick={() => handleDoneButtonClick()}
               sx={{ width: "150px" }}
             >

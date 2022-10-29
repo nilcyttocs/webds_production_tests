@@ -256,7 +256,7 @@ export const Edit = (props: any): JSX.Element => {
             width: props.dimensions.width + "px",
             height: props.dimensions.heightTitle + "px",
             position: "relative",
-            bgcolor: "section.main"
+            bgcolor: "section.background"
           }}
         >
           <Typography
@@ -280,9 +280,7 @@ export const Edit = (props: any): JSX.Element => {
                 transform: "translate(0%, -50%)"
               }}
             >
-              <Typography variant="body2" sx={{ textDecoration: "underline" }}>
-                Help
-              </Typography>
+              <Typography variant="underline">Help</Typography>
             </Button>
           )}
         </Box>
@@ -291,7 +289,7 @@ export const Edit = (props: any): JSX.Element => {
             width: props.dimensions.width + "px",
             height: props.dimensions.heightContent + "px",
             position: "relative",
-            bgcolor: "section.main",
+            bgcolor: "section.background",
             display: "flex",
             flexDirection: "column"
           }}
@@ -385,7 +383,7 @@ export const Edit = (props: any): JSX.Element => {
             width: props.dimensions.width + "px",
             minHeight: props.dimensions.heightControls + "px",
             position: "relative",
-            bgcolor: "section.main",
+            bgcolor: "section.background",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
