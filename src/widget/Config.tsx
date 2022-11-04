@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 
-import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
@@ -9,9 +8,7 @@ import MuiAccordion, { AccordionProps } from "@mui/material/Accordion";
 import MuiAccordionSummary, {
   AccordionSummaryProps
 } from "@mui/material/AccordionSummary";
-import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
 import MuiAccordionDetails from "@mui/material/AccordionDetails";
-import ExpandMore from "@mui/icons-material/ExpandMore";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import InputAdornment from "@mui/material/InputAdornment";
@@ -19,13 +16,20 @@ import OutlinedInput from "@mui/material/OutlinedInput";
 import Switch from "@mui/material/Switch";
 import TextField from "@mui/material/TextField";
 
+import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+
 import { styled } from "@mui/material/styles";
 
 import { Page } from "./ProductionTestsComponent";
 
-import { requestAPI } from "../handler";
+import { CANVAS_ATTRS } from "./mui_extensions/constants";
 
-const showHelp = false;
+import { Canvas } from "./mui_extensions/Canvas";
+import { Content } from "./mui_extensions/Content";
+import { Controls } from "./mui_extensions/Controls";
+
+import { requestAPI } from "../handler";
 
 type powerOptions = {
   [key: string]: string;
@@ -45,7 +49,7 @@ const Accordion = styled((props: AccordionProps) => (
 
 const AccordionSummary = styled((props: AccordionSummaryProps) => (
   <MuiAccordionSummary
-    expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: "0.9rem" }} />}
+    expandIcon={<KeyboardArrowDownIcon sx={{ fontSize: "0.9rem" }} />}
     {...props}
   />
 ))(({ theme }) => ({
@@ -174,181 +178,128 @@ export const Config = (props: any): JSX.Element => {
   }, [props.testRepo]);
 
   return (
-    <>
-      <Stack spacing={2}>
-        <Box
-          sx={{
-            width: props.dimensions.width + "px",
-            height: props.dimensions.heightTitle + "px",
-            position: "relative",
-            bgcolor: "section.background"
-          }}
-        >
-          <Typography
-            variant="h5"
-            sx={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)"
-            }}
-          >
-            {props.partNumber} Production Tests
-          </Typography>
-          {showHelp && (
-            <Button
-              variant="text"
-              sx={{
-                position: "absolute",
-                top: "50%",
-                left: "16px",
-                transform: "translate(0%, -50%)"
-              }}
-            >
-              <Typography variant="underline">Help</Typography>
-            </Button>
-          )}
-        </Box>
-        <Box
-          sx={{
-            width: props.dimensions.width + "px",
-            height: props.dimensions.heightContent + "px",
-            position: "relative",
-            bgcolor: "section.background",
-            display: "flex",
-            flexDirection: "column"
-          }}
-        >
-          <div style={{ margin: "24px auto 0px auto" }}>
-            <Typography>Edit Test Configuration</Typography>
-          </div>
-          <div style={{ margin: "24px", overflow: "auto" }}>
-            <Accordion>
-              <AccordionSummary expandIcon={<ExpandMore />}>
-                <Typography sx={{ width: "25%", flexShrink: 0 }}>
-                  Voltages
-                </Typography>
-                <Typography
-                  sx={{ paddingLeft: "4px", color: "text.secondary" }}
-                >
-                  {JSON.stringify(voltages)
-                    .replace(/:/g, ": ")
-                    .replace(/"|{|}/g, "")
-                    .replace(/,/g, ", ")}
-                </Typography>
-              </AccordionSummary>
-              <AccordionDetails>
-                <Stack justifyContent="center" spacing={2} direction="row">
-                  {["VDDL", "VDDH", "VDD12", "VBUS"].map((voltage) => (
-                    <FormControl
-                      key={voltage}
-                      variant="outlined"
-                      sx={{ width: "25%" }}
-                    >
-                      <InputLabel htmlFor="webds_production_tests_config_voltage_input">
-                        {voltage}
-                      </InputLabel>
-                      <OutlinedInput
-                        id="webds_production_tests_config_voltage_input"
-                        label={voltage}
-                        value={voltages[voltage]}
-                        onChange={(event) =>
-                          handleInputChange(voltage, event.target.value)
-                        }
-                        endAdornment={
-                          <InputAdornment position="end">
-                            <Typography>mv</Typography>
-                          </InputAdornment>
-                        }
+    <Canvas title={props.partNumber + " Production Tests"}>
+      <Content
+        sx={{
+          display: "flex",
+          flexDirection: "column"
+        }}
+      >
+        <div style={{ margin: "0px auto" }}>
+          <Typography>Edit Test Configuration</Typography>
+        </div>
+        <div style={{ marginTop: "24px", overflow: "auto" }}>
+          <Accordion>
+            <AccordionSummary expandIcon={<KeyboardArrowRightIcon />}>
+              <Typography sx={{ width: "25%", flexShrink: 0 }}>
+                Voltages
+              </Typography>
+              <Typography sx={{ paddingLeft: "4px", color: "text.secondary" }}>
+                {JSON.stringify(voltages)
+                  .replace(/:/g, ": ")
+                  .replace(/"|{|}/g, "")
+                  .replace(/,/g, ", ")}
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Stack justifyContent="center" spacing={2} direction="row">
+                {["VDDL", "VDDH", "VDD12", "VBUS"].map((voltage) => (
+                  <FormControl
+                    key={voltage}
+                    variant="outlined"
+                    sx={{ width: "25%" }}
+                  >
+                    <InputLabel htmlFor="webds_production_tests_config_voltage_input">
+                      {voltage}
+                    </InputLabel>
+                    <OutlinedInput
+                      id="webds_production_tests_config_voltage_input"
+                      label={voltage}
+                      value={voltages[voltage]}
+                      onChange={(event) =>
+                        handleInputChange(voltage, event.target.value)
+                      }
+                      endAdornment={
+                        <InputAdornment position="end">
+                          <Typography>mv</Typography>
+                        </InputAdornment>
+                      }
+                    />
+                  </FormControl>
+                ))}
+              </Stack>
+            </AccordionDetails>
+          </Accordion>
+          <Accordion>
+            <AccordionSummary expandIcon={<KeyboardArrowRightIcon />}>
+              <Typography sx={{ width: "25%", flexShrink: 0 }}>
+                Reflash
+              </Typography>
+              <Typography sx={{ paddingLeft: "4px", color: "text.secondary" }}>
+                {doReflash ? "Enabled" : "Disabled"}
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Stack spacing={2} direction="column">
+                <Switch onChange={handleSwitchChange} checked={doReflash} />
+                {doReflash && (
+                  <>
+                    <label htmlFor="webds_production_tests_config_reflash_input">
+                      <Input
+                        id="webds_production_tests_config_reflash_input"
+                        type="file"
+                        accept=".img"
+                        onChange={(event) => handleSelectedFile(event)}
                       />
-                    </FormControl>
-                  ))}
-                </Stack>
-              </AccordionDetails>
-            </Accordion>
-            <Accordion>
-              <AccordionSummary expandIcon={<ExpandMore />}>
-                <Typography sx={{ width: "25%", flexShrink: 0 }}>
-                  Reflash
-                </Typography>
-                <Typography
-                  sx={{ paddingLeft: "4px", color: "text.secondary" }}
-                >
-                  {doReflash ? "Enabled" : "Disabled"}
-                </Typography>
-              </AccordionSummary>
-              <AccordionDetails>
-                <Stack spacing={2} direction="column">
-                  <Switch onChange={handleSwitchChange} checked={doReflash} />
-                  {doReflash && (
-                    <>
-                      <label htmlFor="webds_production_tests_config_reflash_input">
-                        <Input
-                          id="webds_production_tests_config_reflash_input"
-                          type="file"
-                          accept=".img"
-                          onChange={(event) => handleSelectedFile(event)}
-                        />
-                        <Button
-                          component="span"
-                          sx={{ width: "100px", marginRight: "24px" }}
-                        >
-                          Image
-                        </Button>
-                        <TextField
-                          variant="standard"
-                          defaultValue=""
-                          value={image}
-                          error={imgErr}
-                          InputProps={{ readOnly: true }}
-                          onChange={(event) => setImage(event.target.value)}
-                          sx={{
-                            width:
-                              props.dimensions.width -
-                              24 * 2 -
-                              1 * 2 -
-                              16 * 2 -
-                              100 -
-                              24 +
-                              "px"
-                          }}
-                        />
-                      </label>
-                    </>
-                  )}
-                </Stack>
-              </AccordionDetails>
-            </Accordion>
-          </div>
-        </Box>
-        <Box
-          sx={{
-            width: props.dimensions.width + "px",
-            minHeight: props.dimensions.heightControls + "px",
-            position: "relative",
-            bgcolor: "section.background",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center"
-          }}
+                      <Button
+                        component="span"
+                        sx={{ width: "100px", marginRight: "24px" }}
+                      >
+                        Image
+                      </Button>
+                      <TextField
+                        variant="standard"
+                        defaultValue=""
+                        value={image}
+                        error={imgErr}
+                        InputProps={{ readOnly: true }}
+                        onChange={(event) => setImage(event.target.value)}
+                        sx={{
+                          width:
+                            CANVAS_ATTRS.WIDTH -
+                            CANVAS_ATTRS.PADDING * 2 -
+                            1 * 2 -
+                            16 * 2 -
+                            100 -
+                            24 +
+                            "px"
+                        }}
+                      />
+                    </label>
+                  </>
+                )}
+              </Stack>
+            </AccordionDetails>
+          </Accordion>
+        </div>
+      </Content>
+      <Controls
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center"
+        }}
+      >
+        <Button
+          disabled={Object.values(voltages).includes("") || imgErr}
+          onClick={() => handleDoneButtonClick()}
+          sx={{ width: "150px" }}
         >
-          <div
-            style={{
-              margin: "24px"
-            }}
-          >
-            <Button
-              disabled={Object.values(voltages).includes("") || imgErr}
-              onClick={() => handleDoneButtonClick()}
-              sx={{ width: "150px" }}
-            >
-              Done
-            </Button>
-          </div>
-        </Box>
-      </Stack>
-    </>
+          Done
+        </Button>
+      </Controls>
+    </Canvas>
   );
 };
 

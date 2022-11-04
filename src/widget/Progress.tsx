@@ -1,19 +1,25 @@
 import React, { useEffect, useState } from "react";
 
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
+import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 
+import CircularProgress from "@mui/material/CircularProgress";
+
 import { Page } from "./ProductionTestsComponent";
+
+import { CANVAS_ATTRS } from "./mui_extensions/constants";
+
+import { Canvas } from "./mui_extensions/Canvas";
+import { Content } from "./mui_extensions/Content";
+import { Controls } from "./mui_extensions/Controls";
 
 import { requestAPI } from "../handler";
 
 const DEFAULT_TEST_SET_ID = "all";
 
 const SSE_CLOSED = 2;
-
-const showHelp = false;
 
 let totalTests = 0;
 
@@ -69,7 +75,7 @@ export const Progress = (props: any): JSX.Element => {
         removeEvent();
         setTimeout(() => {
           setPass(true);
-        }, 1000);
+        }, 1500);
       }
     };
   };
@@ -117,47 +123,20 @@ export const Progress = (props: any): JSX.Element => {
   }, []);
 
   return (
-    <>
-      <Stack spacing={2}>
+    <Canvas title={props.partNumber + " Production Tests"}>
+      <Content>
         <Box
           sx={{
-            width: props.dimensions.width + "px",
-            height: props.dimensions.heightTitle + "px",
-            position: "relative",
-            bgcolor: "section.background"
-          }}
-        >
-          <Typography
-            variant="h5"
-            sx={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)"
-            }}
-          >
-            {props.partNumber} Production Tests
-          </Typography>
-          {showHelp && (
-            <Button
-              variant="text"
-              sx={{
-                position: "absolute",
-                top: "50%",
-                left: "16px",
-                transform: "translate(0%, -50%)"
-              }}
-            >
-              <Typography variant="underline">Help</Typography>
-            </Button>
-          )}
-        </Box>
-        <Box
-          sx={{
-            width: props.dimensions.width + "px",
-            height: props.dimensions.heightContent + "px",
-            position: "relative",
-            bgcolor: "section.background"
+            width: "100%",
+            minHeight:
+              CANVAS_ATTRS.MIN_HEIGHT_CONTENT -
+              CANVAS_ATTRS.PADDING * 2 -
+              2 +
+              "px",
+            borderStyle: "solid",
+            borderWidth: "1px",
+            borderColor: "divider",
+            position: "relative"
           }}
         >
           <div
@@ -171,9 +150,8 @@ export const Progress = (props: any): JSX.Element => {
           >
             <Box
               sx={{
-                width:
-                  Math.floor((props.dimensions.width * progress) / 100) + "px",
-                height: props.dimensions.heightContent + "px",
+                width: progress + "%",
+                height: "100%",
                 backgroundColor: "custom.green"
               }}
             />
@@ -187,7 +165,14 @@ export const Progress = (props: any): JSX.Element => {
                 transform: "translate(-50%)"
               }}
             >
-              <Typography sx={{ color: "black" }}>{testName}</Typography>
+              {testName && (
+                <Stack spacing={2} direction="row">
+                  <Typography sx={{ color: "black" }}>{testName}</Typography>
+                  {progress < 100 && (
+                    <CircularProgress color="primary" size={24} />
+                  )}
+                </Stack>
+              )}
             </div>
           )}
           <div
@@ -209,50 +194,44 @@ export const Progress = (props: any): JSX.Element => {
             )}
           </div>
         </Box>
-        <Box
+      </Content>
+      <Controls
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center"
+        }}
+      >
+        {pass ? (
+          <Button
+            onClick={() => handleDoneButtonClick()}
+            sx={{ width: "150px" }}
+          >
+            Done
+          </Button>
+        ) : (
+          <Button
+            onClick={() => handleAbortButtonClick()}
+            sx={{ width: "150px" }}
+          >
+            Abort
+          </Button>
+        )}
+        <Button
+          variant="text"
+          onClick={props.showLog}
           sx={{
-            width: props.dimensions.width + "px",
-            minHeight: props.dimensions.heightControls + "px",
-            position: "relative",
-            bgcolor: "section.background",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center"
+            position: "absolute",
+            top: "50%",
+            right: "24px",
+            transform: "translate(0%, -50%)"
           }}
         >
-          <div style={{ margin: "24px" }}>
-            {pass ? (
-              <Button
-                onClick={() => handleDoneButtonClick()}
-                sx={{ width: "150px" }}
-              >
-                Done
-              </Button>
-            ) : (
-              <Button
-                onClick={() => handleAbortButtonClick()}
-                sx={{ width: "150px" }}
-              >
-                Abort
-              </Button>
-            )}
-          </div>
-          <Button
-            variant="text"
-            onClick={props.showLog}
-            sx={{
-              position: "absolute",
-              top: "50%",
-              right: "24px",
-              transform: "translate(0%, -50%)"
-            }}
-          >
-            <Typography variant="underline">Log</Typography>
-          </Button>
-        </Box>
-      </Stack>
-    </>
+          <Typography variant="underline">Log</Typography>
+        </Button>
+      </Controls>
+    </Canvas>
   );
 };
 

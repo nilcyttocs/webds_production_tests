@@ -26,18 +26,6 @@ export enum Page {
   Failure = "FAILURE"
 }
 
-const WIDTH = 800;
-const HEIGHT_TITLE = 70;
-const HEIGHT_CONTENT = 450;
-const HEIGHT_CONTROLS = 120;
-
-const dimensions = {
-  width: WIDTH,
-  heightTitle: HEIGHT_TITLE,
-  heightContent: HEIGHT_CONTENT,
-  heightControls: HEIGHT_CONTROLS
-};
-
 const logLocation = "Synaptics/_links/Production_Tests_Log";
 
 let alertMessage = "";
@@ -130,7 +118,6 @@ export const ProductionTestsComponent = (props: any): JSX.Element => {
       case Page.Landing:
         return (
           <Landing
-            dimensions={dimensions}
             partNumber={partNumber}
             testRepo={testRepo}
             selectedTestSetID={selectedTestSetID}
@@ -142,7 +129,6 @@ export const ProductionTestsComponent = (props: any): JSX.Element => {
       case Page.Edit:
         return (
           <Edit
-            dimensions={dimensions}
             partNumber={partNumber}
             testRepo={testRepo}
             selectedTestSetID={selectedTestSetID}
@@ -153,7 +139,6 @@ export const ProductionTestsComponent = (props: any): JSX.Element => {
       case Page.Config:
         return (
           <Config
-            dimensions={dimensions}
             partNumber={partNumber}
             testRepo={testRepo}
             changePage={changePage}
@@ -163,7 +148,6 @@ export const ProductionTestsComponent = (props: any): JSX.Element => {
       case Page.Failure:
         return (
           <Failure
-            dimensions={dimensions}
             partNumber={partNumber}
             testRepo={testRepo}
             failedTestName={failedTestName}
@@ -174,7 +158,6 @@ export const ProductionTestsComponent = (props: any): JSX.Element => {
       case Page.Progress:
         return (
           <Progress
-            dimensions={dimensions}
             partNumber={partNumber}
             fullPartNumber={fullPartNumber}
             testRepo={testRepo}

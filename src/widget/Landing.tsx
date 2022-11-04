@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 
 import { v4 as uuidv4 } from "uuid";
 
-import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
@@ -25,10 +24,12 @@ import { useTheme } from "@mui/material/styles";
 
 import { Page } from "./ProductionTestsComponent";
 
+import { Canvas } from "./mui_extensions/Canvas";
+import { Content } from "./mui_extensions/Content";
+import { Controls } from "./mui_extensions/Controls";
+
 const DEFAULT_TEST_SET_ID = "all";
 const DEFAULT_TEST_SET_NAME = "All";
-
-const showHelp = false;
 
 export const Landing = (props: any): JSX.Element => {
   const [testSets, setTestSets] = useState([]);
@@ -190,55 +191,14 @@ export const Landing = (props: any): JSX.Element => {
 
   return (
     <>
-      <Stack spacing={2}>
-        <Box
+      <Canvas title={props.partNumber + " Production Tests"}>
+        <Content
           sx={{
-            width: props.dimensions.width + "px",
-            height: props.dimensions.heightTitle + "px",
-            position: "relative",
-            bgcolor: "section.background"
-          }}
-        >
-          <Typography
-            variant="h5"
-            sx={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)"
-            }}
-          >
-            {props.partNumber} Production Tests
-          </Typography>
-          {showHelp && (
-            <Button
-              variant="text"
-              sx={{
-                position: "absolute",
-                top: "50%",
-                left: "16px",
-                transform: "translate(0%, -50%)"
-              }}
-            >
-              <Typography variant="underline">Help</Typography>
-            </Button>
-          )}
-        </Box>
-        <Box
-          sx={{
-            width: props.dimensions.width + "px",
-            height: props.dimensions.heightContent + "px",
-            position: "relative",
-            bgcolor: "section.background",
             display: "flex",
             flexDirection: "column"
           }}
         >
-          <div
-            style={{
-              margin: "24px auto 0px auto"
-            }}
-          >
+          <div style={{ margin: "0px auto" }}>
             <Typography>Select Test Set</Typography>
           </div>
           <div
@@ -276,64 +236,58 @@ export const Landing = (props: any): JSX.Element => {
               </IconButton>
             </Stack>
           </div>
-        </Box>
-        <Box
+        </Content>
+        <Controls
           sx={{
-            width: props.dimensions.width + "px",
-            minHeight: props.dimensions.heightControls + "px",
-            position: "relative",
-            bgcolor: "section.background",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "center"
           }}
         >
-          <div style={{ margin: "24px" }}>
-            <Button
-              onClick={() => handleRunButtonClick()}
-              sx={{ width: "150px" }}
-            >
-              Run
-            </Button>
-            <Button
-              variant="text"
-              onClick={() => handleConfigButtonClick()}
+          <Button
+            onClick={() => handleRunButtonClick()}
+            sx={{ width: "150px" }}
+          >
+            Run
+          </Button>
+          <Button
+            variant="text"
+            onClick={() => handleConfigButtonClick()}
+            sx={{
+              position: "absolute",
+              top: "50%",
+              left: "24px",
+              transform: "translate(0%, -50%)"
+            }}
+          >
+            <Typography variant="underline">Config</Typography>
+          </Button>
+          <Button
+            variant="text"
+            disabled={selectedID === DEFAULT_TEST_SET_ID}
+            onClick={() => handleEditButtonClick()}
+            sx={{
+              position: "absolute",
+              top: "50%",
+              right: "24px",
+              transform: "translate(0%, -50%)"
+            }}
+          >
+            <Typography
+              variant="underline"
               sx={{
-                position: "absolute",
-                top: "50%",
-                left: "24px",
-                transform: "translate(0%, -50%)"
+                color:
+                  selectedID === DEFAULT_TEST_SET_ID
+                    ? theme.palette.text.disabled
+                    : theme.palette.text.primary
               }}
             >
-              <Typography variant="underline">Config</Typography>
-            </Button>
-            <Button
-              variant="text"
-              disabled={selectedID === DEFAULT_TEST_SET_ID}
-              onClick={() => handleEditButtonClick()}
-              sx={{
-                position: "absolute",
-                top: "50%",
-                right: "24px",
-                transform: "translate(0%, -50%)"
-              }}
-            >
-              <Typography
-                variant="underline"
-                sx={{
-                  color:
-                    selectedID === DEFAULT_TEST_SET_ID
-                      ? theme.palette.text.disabled
-                      : theme.palette.text.primary
-                }}
-              >
-                Edit
-              </Typography>
-            </Button>
-          </div>
-        </Box>
-      </Stack>
+              Edit
+            </Typography>
+          </Button>
+        </Controls>
+      </Canvas>
       <Dialog
         fullWidth
         maxWidth="xs"

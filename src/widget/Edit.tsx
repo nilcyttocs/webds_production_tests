@@ -4,7 +4,6 @@ import { v4 as uuidv4 } from "uuid";
 
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
-import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
@@ -19,7 +18,11 @@ import ListItemText from "@mui/material/ListItemText";
 
 import { Page } from "./ProductionTestsComponent";
 
-const showHelp = false;
+import { CANVAS_ATTRS } from "./mui_extensions/constants";
+
+import { Canvas } from "./mui_extensions/Canvas";
+import { Content } from "./mui_extensions/Content";
+import { Controls } from "./mui_extensions/Controls";
 
 const reducer = (state: any, action: any): any => {
   switch (action.type) {
@@ -201,19 +204,21 @@ export const Edit = (props: any): JSX.Element => {
   };
 
   useEffect(() => {
-    setDividerOffset(props.dimensions.width / 2);
+    setDividerOffset(CANVAS_ATTRS.WIDTH / 2);
 
     let height =
-      props.dimensions.heightContent -
+      document.getElementById("webds_production_tests_edit_content")!
+        .clientHeight -
       document.getElementById("webds_production_tests_edit_content_label")!
         .clientHeight -
       24 * 3;
     setDividerHeight(height);
 
-    height -= document.getElementById("webds_production_tests_edit_list_label")!
-      .clientHeight;
+    height -=
+      document.getElementById("webds_production_tests_edit_list_label")!
+        .clientHeight + 1;
     setListHeight(height);
-  }, [props.dimensions.width, props.dimensions.heightContent]);
+  }, []);
 
   useEffect(() => {
     if (props.testRepo.sets) {
@@ -249,158 +254,106 @@ export const Edit = (props: any): JSX.Element => {
   }, [props.testRepo, props.selectedTestSetID]);
 
   return (
-    <>
-      <Stack spacing={2}>
-        <Box
-          sx={{
-            width: props.dimensions.width + "px",
-            height: props.dimensions.heightTitle + "px",
-            position: "relative",
-            bgcolor: "section.background"
-          }}
+    <Canvas title={props.partNumber + " Production Tests"}>
+      <Content
+        id="webds_production_tests_edit_content"
+        sx={{
+          display: "flex",
+          flexDirection: "column"
+        }}
+      >
+        <div
+          id="webds_production_tests_edit_content_label"
+          style={{ margin: "0px auto" }}
         >
-          <Typography
-            variant="h5"
-            sx={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)"
-            }}
-          >
-            {props.partNumber} Production Tests
-          </Typography>
-          {showHelp && (
-            <Button
-              variant="text"
+          <Typography>Edit Test Set</Typography>
+        </div>
+        <div style={{ marginTop: "24px" }}>
+          <DragDropContext onDragEnd={handleOnDragEnd}>
+            <Divider
+              orientation="vertical"
               sx={{
                 position: "absolute",
-                top: "50%",
-                left: "16px",
-                transform: "translate(0%, -50%)"
+                height: dividerHeight + "px",
+                left: dividerOffset + "px"
               }}
-            >
-              <Typography variant="underline">Help</Typography>
-            </Button>
-          )}
-        </Box>
-        <Box
-          sx={{
-            width: props.dimensions.width + "px",
-            height: props.dimensions.heightContent + "px",
-            position: "relative",
-            bgcolor: "section.background",
-            display: "flex",
-            flexDirection: "column"
-          }}
-        >
-          <div
-            id="webds_production_tests_edit_content_label"
-            style={{
-              margin: "24px auto 0px auto"
-            }}
-          >
-            <Typography>Edit Test Set</Typography>
-          </div>
-          <div style={{ margin: "24px" }}>
-            <DragDropContext onDragEnd={handleOnDragEnd}>
-              <Divider
-                orientation="vertical"
-                sx={{
-                  position: "absolute",
-                  height: dividerHeight + "px",
-                  left: dividerOffset + "px"
-                }}
-              />
-              <Stack spacing={3} direction="row" sx={{ borderStyle: "none" }}>
-                <List sx={{ width: "50%", padding: "0px" }}>
-                  <ListItem
-                    id="webds_production_tests_edit_list_label"
-                    key={uuidv4()}
-                    divider
-                  >
-                    <ListItemText
-                      primary="Library"
-                      sx={{ textAlign: "center" }}
-                    />
-                  </ListItem>
-                  <div
-                    style={{
-                      height: listHeight + "px",
-                      overflow: "auto"
-                    }}
-                  >
-                    <Droppable droppableId="library" isDropDisabled={true}>
-                      {(provided: any) => (
-                        <div
-                          ref={provided.innerRef}
-                          {...provided.droppableProps}
-                        >
-                          {generateLibraryItems()}
-                          {provided.placeholder}
-                        </div>
-                      )}
-                    </Droppable>
-                  </div>
-                </List>
-                <List sx={{ width: "50%", padding: "0px" }}>
-                  <ListItem key={uuidv4()} divider>
-                    <ListItemText
-                      primary="Test Set"
-                      sx={{ textAlign: "center" }}
-                    />
-                  </ListItem>
-                  <div
-                    style={{
-                      height: listHeight + "px",
-                      overflow: "auto"
-                    }}
-                  >
-                    <Droppable droppableId="testSet">
-                      {(provided: any) => (
-                        <div
-                          ref={provided.innerRef}
-                          {...provided.droppableProps}
-                          style={{
-                            height:
-                              Math.max(listHeight, state.testSet.length * 49) +
-                              "px"
-                          }}
-                        >
-                          {generateTestSetItems()}
-                          {provided.placeholder}
-                        </div>
-                      )}
-                    </Droppable>
-                  </div>
-                </List>
-              </Stack>
-            </DragDropContext>
-          </div>
-        </Box>
-        <Box
-          sx={{
-            width: props.dimensions.width + "px",
-            minHeight: props.dimensions.heightControls + "px",
-            position: "relative",
-            bgcolor: "section.background",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center"
-          }}
-        >
-          <div style={{ margin: "24px" }}>
-            <Button
-              onClick={() => handleDoneButtonClick()}
-              sx={{ width: "150px" }}
-            >
-              Done
-            </Button>
-          </div>
-        </Box>
-      </Stack>
-    </>
+            />
+            <Stack spacing={3} direction="row" sx={{ borderStyle: "none" }}>
+              <List sx={{ width: "50%", padding: "0px" }}>
+                <ListItem
+                  id="webds_production_tests_edit_list_label"
+                  key={uuidv4()}
+                  divider
+                >
+                  <ListItemText
+                    primary="Library"
+                    sx={{ textAlign: "center" }}
+                  />
+                </ListItem>
+                <div
+                  style={{
+                    height: listHeight + "px",
+                    overflow: "auto"
+                  }}
+                >
+                  <Droppable droppableId="library" isDropDisabled={true}>
+                    {(provided: any) => (
+                      <div ref={provided.innerRef} {...provided.droppableProps}>
+                        {generateLibraryItems()}
+                        {provided.placeholder}
+                      </div>
+                    )}
+                  </Droppable>
+                </div>
+              </List>
+              <List sx={{ width: "50%", padding: "0px" }}>
+                <ListItem key={uuidv4()} divider>
+                  <ListItemText
+                    primary="Test Set"
+                    sx={{ textAlign: "center" }}
+                  />
+                </ListItem>
+                <div
+                  style={{
+                    height: listHeight + "px",
+                    overflow: "auto"
+                  }}
+                >
+                  <Droppable droppableId="testSet">
+                    {(provided: any) => (
+                      <div
+                        ref={provided.innerRef}
+                        {...provided.droppableProps}
+                        style={{
+                          height:
+                            Math.max(listHeight, state.testSet.length * 49) +
+                            "px"
+                        }}
+                      >
+                        {generateTestSetItems()}
+                        {provided.placeholder}
+                      </div>
+                    )}
+                  </Droppable>
+                </div>
+              </List>
+            </Stack>
+          </DragDropContext>
+        </div>
+      </Content>
+      <Controls
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center"
+        }}
+      >
+        <Button onClick={() => handleDoneButtonClick()} sx={{ width: "150px" }}>
+          Done
+        </Button>
+      </Controls>
+    </Canvas>
   );
 };
 
