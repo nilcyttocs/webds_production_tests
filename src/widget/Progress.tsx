@@ -165,14 +165,14 @@ export const Progress = (props: any): JSX.Element => {
                 transform: "translate(-50%)"
               }}
             >
-              {testName && (
-                <Stack spacing={2} direction="row">
-                  <Typography sx={{ color: "black" }}>{testName}</Typography>
-                  {progress < 100 && (
-                    <CircularProgress color="primary" size={24} />
-                  )}
-                </Stack>
-              )}
+              <Stack spacing={2} direction="row">
+                <Typography sx={{ color: "black" }}>
+                  {testName ? testName : "Preparing..."}
+                </Typography>
+                {progress < 100 && (
+                  <CircularProgress color="primary" size={24} />
+                )}
+              </Stack>
             </div>
           )}
           <div
