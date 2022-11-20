@@ -152,7 +152,8 @@ export const Progress = (props: any): JSX.Element => {
               sx={{
                 width: progress + "%",
                 height: "100%",
-                backgroundColor: "custom.green"
+                backgroundColor: "custom.pass",
+                transition: "width 0.5s"
               }}
             />
           </div>

@@ -28,7 +28,7 @@ export const Failure = (props: any): JSX.Element => {
               CANVAS_ATTRS.PADDING * 2 -
               2 +
               "px",
-            bgcolor: "custom.red",
+            bgcolor: "custom.fail",
             borderStyle: "solid",
             borderWidth: "1px",
             borderColor: "divider",
