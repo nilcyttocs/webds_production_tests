@@ -16,6 +16,15 @@ import Landing from "./Landing";
 
 import Progress from "./Progress";
 
+import {
+  ALERT_MESSAGE_ADD_PUBLIC_CONFIG_JSON,
+  ALERT_MESSAGE_ADD_PRIVATE_CONFIG_JSON,
+  ALERT_MESSAGE_DEVICE_PART_NUMBER,
+  ALERT_MESSAGE_TEST_SETS_START,
+  ALERT_MESSAGE_TEST_SETS_END,
+  LOG_LOCATION
+} from "./constants";
+
 import { requestAPI } from "../handler";
 
 export enum Page {
@@ -26,21 +35,7 @@ export enum Page {
   Failure = "FAILURE"
 }
 
-const logLocation = "Synaptics/_links/Production_Tests_Log";
-
 let alertMessage = "";
-
-const alertMessagePublicConfigJSON =
-  "Failed to retrieve config JSON file. Please check in file browser in left sidebar and ensure availability of config JSON file in /Packrat/ directory (e.g. /Packrat/1234567/config.json for PR1234567).";
-
-const alertMessagePrivateConfigJSON =
-  "Failed to retrieve config JSON file. Please check in file browser in left sidebar and ensure availability of config JSON file in /Packrat/ directory (e.g. /Packrat/1234567/config_private.json for PR1234567).";
-
-const alertMessageDevicePartNumber = "Failed to read device part number.";
-
-const alertMessageTestSetsStart = "Failed to retrieve test sets for ";
-
-const alertMessageTestSetsEnd = "Production tests not currently available for ";
 
 export const ProductionTestsComponent = (props: any): JSX.Element => {
   const [initialized, setInitialized] = useState<boolean>(false);
@@ -56,10 +51,15 @@ export const ProductionTestsComponent = (props: any): JSX.Element => {
 
   const { commands, shell } = props.frontend;
 
+  const showAlert = (message: string) => {
+    alertMessage = message;
+    setAlert(true);
+  };
+
   const showLog = async () => {
     commands
       .execute("docmanager:open", {
-        path: logLocation,
+        path: LOG_LOCATION,
         factory: "Editor",
         options: { mode: "split-right" }
       })
@@ -184,11 +184,10 @@ export const ProductionTestsComponent = (props: any): JSX.Element => {
       } catch (error) {
         console.error(error);
         if (external) {
-          alertMessage = alertMessagePublicConfigJSON;
+          showAlert(ALERT_MESSAGE_ADD_PUBLIC_CONFIG_JSON);
         } else {
-          alertMessage = alertMessagePrivateConfigJSON;
+          showAlert(ALERT_MESSAGE_ADD_PRIVATE_CONFIG_JSON);
         }
-        setAlert(true);
         return;
       }
       let fpn = "";
@@ -199,34 +198,33 @@ export const ProductionTestsComponent = (props: any): JSX.Element => {
         setPartNumber(fpn.split("-")[0]);
       } catch (error) {
         console.error(error);
-        alertMessage = alertMessageDevicePartNumber;
-        setAlert(true);
+        showAlert(ALERT_MESSAGE_DEVICE_PART_NUMBER);
         return;
       }
       try {
         const tr = await requestAPI<any>("production-tests/" + fpn);
         if (!tr || Object.keys(tr).length === 0) {
-          alertMessage =
-            alertMessageTestSetsStart +
-            fpn +
-            ". " +
-            alertMessageTestSetsEnd +
-            fpn +
-            ".";
-          setAlert(true);
+          showAlert(
+            ALERT_MESSAGE_TEST_SETS_START +
+              fpn +
+              ". " +
+              ALERT_MESSAGE_TEST_SETS_END +
+              fpn +
+              "."
+          );
           return;
         }
         setTestRepo(tr);
       } catch (error) {
         console.error(error);
-        alertMessage =
-          alertMessageTestSetsStart +
-          fpn +
-          ". " +
-          alertMessageTestSetsEnd +
-          fpn +
-          ".";
-        setAlert(true);
+        showAlert(
+          ALERT_MESSAGE_TEST_SETS_START +
+            fpn +
+            ". " +
+            ALERT_MESSAGE_TEST_SETS_END +
+            fpn +
+            "."
+        );
         return;
       }
       setInitialized(true);

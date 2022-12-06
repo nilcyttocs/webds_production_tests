@@ -24,12 +24,11 @@ import { useTheme } from "@mui/material/styles";
 
 import { Page } from "./ProductionTestsComponent";
 
+import { DEFAULT_TEST_SET_ID, DEFAULT_TEST_SET_NAME } from "./constants";
+
 import { Canvas } from "./mui_extensions/Canvas";
 import { Content } from "./mui_extensions/Content";
 import { Controls } from "./mui_extensions/Controls";
-
-const DEFAULT_TEST_SET_ID = "all";
-const DEFAULT_TEST_SET_NAME = "All";
 
 export const Landing = (props: any): JSX.Element => {
   const [testSets, setTestSets] = useState([]);

@@ -9,6 +9,8 @@ import CircularProgress from "@mui/material/CircularProgress";
 
 import { Page } from "./ProductionTestsComponent";
 
+import { DEFAULT_TEST_SET_ID } from "./constants";
+
 import { CANVAS_ATTRS } from "./mui_extensions/constants";
 
 import { Canvas } from "./mui_extensions/Canvas";
@@ -16,8 +18,6 @@ import { Content } from "./mui_extensions/Content";
 import { Controls } from "./mui_extensions/Controls";
 
 import { requestAPI } from "../handler";
-
-const DEFAULT_TEST_SET_ID = "all";
 
 const SSE_CLOSED = 2;
 
