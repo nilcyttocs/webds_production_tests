@@ -194,6 +194,7 @@ export const ProductionTestsComponent = (props: any): JSX.Element => {
       try {
         fpn = await props.service.touchcomm.getPartNumber();
         fpn = fpn.replace(/ /g, "-");
+        fpn = fpn.replace(/:$/g, "");
         setFullPartNumber(fpn);
         setPartNumber(fpn.split("-")[0]);
       } catch (error) {
