@@ -16,7 +16,7 @@ import Landing from "./Landing";
 
 import Progress from "./Progress";
 
-import { webdsService } from "./local_exports";
+import { requestAPI, webdsService } from "./local_exports";
 
 import {
   ALERT_MESSAGE_ADD_PUBLIC_CONFIG_JSON,
@@ -26,8 +26,6 @@ import {
   ALERT_MESSAGE_TEST_SETS_END,
   LOG_LOCATION
 } from "./constants";
-
-import { requestAPI } from "../handler";
 
 export enum Page {
   Landing = "LANDING",

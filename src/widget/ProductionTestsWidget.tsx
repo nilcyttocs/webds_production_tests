@@ -4,26 +4,19 @@ import { JupyterFrontEnd } from "@jupyterlab/application";
 
 import { ReactWidget } from "@jupyterlab/apputils";
 
-import { WebDSService } from "@webds/service";
-
 import ProductionTestsComponent from "./ProductionTestsComponent";
-
-export let webdsService: WebDSService;
 
 export class ProductionTestsWidget extends ReactWidget {
   id: string;
   frontend: JupyterFrontEnd;
-  service: WebDSService;
 
-  constructor(id: string, app: JupyterFrontEnd, service: WebDSService) {
+  constructor(id: string, app: JupyterFrontEnd) {
     super();
     this.id = id;
     this.frontend = app;
-    this.service = service;
   }
 
   render(): JSX.Element {
-    webdsService = this.service;
     return (
       <div id={this.id + "_component"}>
         <ProductionTestsComponent frontend={this.frontend} />
