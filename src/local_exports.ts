@@ -1,3 +1,3 @@
-export { webdsService } from "./utils";
+export { webdsService } from "./index";
 
 export { requestAPI } from "./handler";
