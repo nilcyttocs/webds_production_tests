@@ -8,6 +8,8 @@ import { WebDSService } from "@webds/service";
 
 import ProductionTestsComponent from "./ProductionTestsComponent";
 
+export let webdsService: WebDSService;
+
 export class ProductionTestsWidget extends ReactWidget {
   id: string;
   frontend: JupyterFrontEnd;
@@ -21,12 +23,10 @@ export class ProductionTestsWidget extends ReactWidget {
   }
 
   render(): JSX.Element {
+    webdsService = this.service;
     return (
       <div id={this.id + "_component"}>
-        <ProductionTestsComponent
-          frontend={this.frontend}
-          service={this.service}
-        />
+        <ProductionTestsComponent frontend={this.frontend} />
       </div>
     );
   }

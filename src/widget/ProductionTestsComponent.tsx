@@ -16,6 +16,8 @@ import Landing from "./Landing";
 
 import Progress from "./Progress";
 
+import { webdsService } from "./local_exports";
+
 import {
   ALERT_MESSAGE_ADD_PUBLIC_CONFIG_JSON,
   ALERT_MESSAGE_ADD_PRIVATE_CONFIG_JSON,
@@ -48,6 +50,8 @@ export const ProductionTestsComponent = (props: any): JSX.Element => {
   const [selectedTestSetID, setSelectedTestSetID] = useState<string | null>(
     null
   );
+
+  const webdsTheme = webdsService.ui.getWebDSTheme();
 
   const { commands, shell } = props.frontend;
 
@@ -174,12 +178,12 @@ export const ProductionTestsComponent = (props: any): JSX.Element => {
 
   useEffect(() => {
     const initialize = async () => {
-      const external = props.service.pinormos.isExternal();
+      const external = webdsService.pinormos.isExternal();
       try {
         if (external) {
-          await props.service.packrat.cache.addPublicConfig();
+          await webdsService.packrat.cache.addPublicConfig();
         } else {
-          await props.service.packrat.cache.addPrivateConfig();
+          await webdsService.packrat.cache.addPrivateConfig();
         }
       } catch (error) {
         console.error(error);
@@ -192,7 +196,7 @@ export const ProductionTestsComponent = (props: any): JSX.Element => {
       }
       let fpn = "";
       try {
-        fpn = await props.service.touchcomm.getPartNumber();
+        fpn = await webdsService.touchcomm.getPartNumber();
         fpn = fpn.replace(/ /g, "-");
         let fpnList = fpn.split(":");
         if (fpnList.length === 2) {
@@ -246,8 +250,6 @@ export const ProductionTestsComponent = (props: any): JSX.Element => {
     };
     initialize();
   }, []);
-
-  const webdsTheme = props.service.ui.getWebDSTheme();
 
   return (
     <>
