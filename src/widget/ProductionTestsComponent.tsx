@@ -16,7 +16,7 @@ import Landing from "./Landing";
 
 import Progress from "./Progress";
 
-import { requestAPI, webdsService } from "./local_exports";
+import { frontend, requestAPI, webdsService } from "./local_exports";
 
 import {
   ALERT_MESSAGE_ADD_PUBLIC_CONFIG_JSON,
@@ -51,7 +51,7 @@ export const ProductionTestsComponent = (props: any): JSX.Element => {
 
   const webdsTheme = webdsService.ui.getWebDSTheme();
 
-  const { commands, shell } = props.frontend;
+  const { commands, shell } = frontend;
 
   const showAlert = (message: string) => {
     alertMessage = message;
