@@ -1,8 +1,8 @@
-import React from "react";
+import React from 'react';
 
-import { ReactWidget } from "@jupyterlab/apputils";
+import { ReactWidget } from '@jupyterlab/apputils';
 
-import ProductionTestsComponent from "./ProductionTestsComponent";
+import ProductionTestsComponent from './ProductionTestsComponent';
 
 export class ProductionTestsWidget extends ReactWidget {
   id: string;
@@ -14,7 +14,7 @@ export class ProductionTestsWidget extends ReactWidget {
 
   render(): JSX.Element {
     return (
-      <div id={this.id + "_component"}>
+      <div id={this.id + '_component'}>
         <ProductionTestsComponent />
       </div>
     );

@@ -1,38 +1,34 @@
-import React, { useCallback, useEffect, useReducer, useState } from "react";
+import React, { useCallback, useEffect, useReducer, useState } from 'react';
 
-import { v4 as uuidv4 } from "uuid";
+import { v4 as uuidv4 } from 'uuid';
 
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 
-import Button from "@mui/material/Button";
-import Stack from "@mui/material/Stack";
-import Typography from "@mui/material/Typography";
-import Divider from "@mui/material/Divider";
+import DeleteIcon from '@mui/icons-material/Delete';
+import Button from '@mui/material/Button';
+import Divider from '@mui/material/Divider';
+import IconButton from '@mui/material/IconButton';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
 
-import IconButton from "@mui/material/IconButton";
-import DeleteIcon from "@mui/icons-material/Delete";
-
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemText from "@mui/material/ListItemText";
-
-import { Page } from "./ProductionTestsComponent";
-
-import { CANVAS_ATTRS } from "./mui_extensions/constants";
-
-import { Canvas } from "./mui_extensions/Canvas";
-import { Content } from "./mui_extensions/Content";
-import { Controls } from "./mui_extensions/Controls";
+import { Canvas } from './mui_extensions/Canvas';
+import { CANVAS_ATTRS } from './mui_extensions/constants';
+import { Content } from './mui_extensions/Content';
+import { Controls } from './mui_extensions/Controls';
+import { Page } from './ProductionTestsComponent';
 
 const reducer = (state: any, action: any): any => {
   switch (action.type) {
-    case "SET": {
+    case 'SET': {
       return {
         ...state,
         [action.to]: action.from
       };
     }
-    case "COPY": {
+    case 'COPY': {
       const from = Array.from(state[action.from]);
       const item: any = from[action.fromIndex];
       const to = Array.from(state[action.to]);
@@ -43,7 +39,7 @@ const reducer = (state: any, action: any): any => {
         [action.to]: to
       };
     }
-    case "MOVE": {
+    case 'MOVE': {
       const from = Array.from(state[action.from]);
       const [item] = from.splice(action.fromIndex, 1);
       const to = Array.from(state[action.to]);
@@ -54,7 +50,7 @@ const reducer = (state: any, action: any): any => {
         [action.to]: to
       };
     }
-    case "REMOVE": {
+    case 'REMOVE': {
       const from = Array.from(state[action.from]);
       from.splice(action.fromIndex, 1);
       return {
@@ -62,7 +58,7 @@ const reducer = (state: any, action: any): any => {
         [action.from]: from
       };
     }
-    case "REORDER": {
+    case 'REORDER': {
       const from = Array.from(state[action.from]);
       const [item] = from.splice(action.fromIndex, 1);
       const to = from;
@@ -87,7 +83,7 @@ export const Edit = (props: any): JSX.Element => {
   const handleDeleteButtonClick = useCallback(
     (droppableId: string, index: number) => {
       dispatch({
-        type: "REMOVE",
+        type: 'REMOVE',
         from: droppableId,
         fromIndex: index
       });
@@ -123,8 +119,8 @@ export const Edit = (props: any): JSX.Element => {
                   ...provided.draggableProps.style,
                   transform: snapshot.isDragging
                     ? provided.draggableProps.style?.transform
-                    : "translate(0px, 0px)",
-                  padding: "0px 8px"
+                    : 'translate(0px, 0px)',
+                  padding: '0px 8px'
                 }}
               >
                 <ListItem divider>
@@ -132,7 +128,7 @@ export const Edit = (props: any): JSX.Element => {
                 </ListItem>
               </div>
               {snapshot.isDragging && (
-                <div style={{ transform: "none !important" }}>
+                <div style={{ transform: 'none !important' }}>
                   <ListItem divider>
                     <ListItemText primary={name} />
                   </ListItem>
@@ -150,7 +146,7 @@ export const Edit = (props: any): JSX.Element => {
       return (
         <Draggable key={id} draggableId={id} index={index}>
           {(provided: any) => (
-            <div style={{ padding: "0px 8px" }}>
+            <div style={{ padding: '0px 8px' }}>
               <ListItem
                 ref={provided.innerRef}
                 {...provided.draggableProps}
@@ -160,7 +156,7 @@ export const Edit = (props: any): JSX.Element => {
                   <IconButton
                     color="error"
                     edge="end"
-                    onClick={() => handleDeleteButtonClick("testSet", index)}
+                    onClick={() => handleDeleteButtonClick('testSet', index)}
                   >
                     <DeleteIcon />
                   </IconButton>
@@ -177,7 +173,7 @@ export const Edit = (props: any): JSX.Element => {
 
   const handleOnDragEnd = (result: any) => {
     console.log(result);
-    if (result.reason !== "DROP") {
+    if (result.reason !== 'DROP') {
       return;
     }
 
@@ -187,11 +183,11 @@ export const Edit = (props: any): JSX.Element => {
 
     let action: string;
     if (result.source.droppableId === result.destination.droppableId) {
-      action = "REORDER";
-    } else if (result.source.droppableId === "library") {
-      action = "COPY";
+      action = 'REORDER';
+    } else if (result.source.droppableId === 'library') {
+      action = 'COPY';
     } else {
-      action = "MOVE";
+      action = 'MOVE';
     }
 
     dispatch({
@@ -207,15 +203,15 @@ export const Edit = (props: any): JSX.Element => {
     setDividerOffset(CANVAS_ATTRS.WIDTH / 2);
 
     let height =
-      document.getElementById("webds_production_tests_edit_content")!
+      document.getElementById('webds_production_tests_edit_content')!
         .clientHeight -
-      document.getElementById("webds_production_tests_edit_content_label")!
+      document.getElementById('webds_production_tests_edit_content_label')!
         .clientHeight -
       24 * 3;
     setDividerHeight(height);
 
     height -=
-      document.getElementById("webds_production_tests_edit_list_label")!
+      document.getElementById('webds_production_tests_edit_list_label')!
         .clientHeight + 1;
     setListHeight(height);
   }, []);
@@ -231,9 +227,9 @@ export const Edit = (props: any): JSX.Element => {
         }
       );
       dispatch({
-        type: "SET",
+        type: 'SET',
         from: library,
-        to: "library"
+        to: 'library'
       });
 
       const selected = props.testRepo.sets.find(
@@ -246,40 +242,40 @@ export const Edit = (props: any): JSX.Element => {
         };
       });
       dispatch({
-        type: "SET",
+        type: 'SET',
         from: testSet,
-        to: "testSet"
+        to: 'testSet'
       });
     }
   }, [props.testRepo, props.selectedTestSetID]);
 
   return (
-    <Canvas title={props.partNumber + " Production Tests"}>
+    <Canvas title={props.partNumber + ' Production Tests'}>
       <Content
         id="webds_production_tests_edit_content"
         sx={{
-          display: "flex",
-          flexDirection: "column"
+          display: 'flex',
+          flexDirection: 'column'
         }}
       >
         <div
           id="webds_production_tests_edit_content_label"
-          style={{ margin: "0px auto" }}
+          style={{ margin: '0px auto' }}
         >
           <Typography>Edit Test Set</Typography>
         </div>
-        <div style={{ marginTop: "24px" }}>
+        <div style={{ marginTop: '24px' }}>
           <DragDropContext onDragEnd={handleOnDragEnd}>
             <Divider
               orientation="vertical"
               sx={{
-                position: "absolute",
-                height: dividerHeight + "px",
-                left: dividerOffset + "px"
+                position: 'absolute',
+                height: dividerHeight + 'px',
+                left: dividerOffset + 'px'
               }}
             />
-            <Stack spacing={3} direction="row" sx={{ borderStyle: "none" }}>
-              <List sx={{ width: "50%", padding: "0px" }}>
+            <Stack spacing={3} direction="row" sx={{ borderStyle: 'none' }}>
+              <List sx={{ width: '50%', padding: '0px' }}>
                 <ListItem
                   id="webds_production_tests_edit_list_label"
                   key={uuidv4()}
@@ -287,13 +283,13 @@ export const Edit = (props: any): JSX.Element => {
                 >
                   <ListItemText
                     primary="Library"
-                    sx={{ textAlign: "center" }}
+                    sx={{ textAlign: 'center' }}
                   />
                 </ListItem>
                 <div
                   style={{
-                    height: listHeight + "px",
-                    overflow: "auto"
+                    height: listHeight + 'px',
+                    overflow: 'auto'
                   }}
                 >
                   <Droppable droppableId="library" isDropDisabled={true}>
@@ -306,17 +302,17 @@ export const Edit = (props: any): JSX.Element => {
                   </Droppable>
                 </div>
               </List>
-              <List sx={{ width: "50%", padding: "0px" }}>
+              <List sx={{ width: '50%', padding: '0px' }}>
                 <ListItem key={uuidv4()} divider>
                   <ListItemText
                     primary="Test Set"
-                    sx={{ textAlign: "center" }}
+                    sx={{ textAlign: 'center' }}
                   />
                 </ListItem>
                 <div
                   style={{
-                    height: listHeight + "px",
-                    overflow: "auto"
+                    height: listHeight + 'px',
+                    overflow: 'auto'
                   }}
                 >
                   <Droppable droppableId="testSet">
@@ -327,7 +323,7 @@ export const Edit = (props: any): JSX.Element => {
                         style={{
                           height:
                             Math.max(listHeight, state.testSet.length * 49) +
-                            "px"
+                            'px'
                         }}
                       >
                         {generateTestSetItems()}
@@ -343,13 +339,13 @@ export const Edit = (props: any): JSX.Element => {
       </Content>
       <Controls
         sx={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center"
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center'
         }}
       >
-        <Button onClick={() => handleDoneButtonClick()} sx={{ width: "150px" }}>
+        <Button onClick={() => handleDoneButtonClick()} sx={{ width: '150px' }}>
           Done
         </Button>
       </Controls>

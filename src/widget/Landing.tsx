@@ -1,34 +1,28 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 
-import { v4 as uuidv4 } from "uuid";
+import { v4 as uuidv4 } from 'uuid';
 
-import Button from "@mui/material/Button";
-import Stack from "@mui/material/Stack";
-import Typography from "@mui/material/Typography";
+import AddBoxIcon from '@mui/icons-material/AddBox';
+import DeleteIcon from '@mui/icons-material/Delete';
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import IconButton from '@mui/material/IconButton';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemText from '@mui/material/ListItemText';
+import Stack from '@mui/material/Stack';
+import { useTheme } from '@mui/material/styles';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
 
-import IconButton from "@mui/material/IconButton";
-import DeleteIcon from "@mui/icons-material/Delete";
-import AddBoxIcon from "@mui/icons-material/AddBox";
-
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemText from "@mui/material/ListItemText";
-import ListItemButton from "@mui/material/ListItemButton";
-
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import TextField from "@mui/material/TextField";
-
-import { useTheme } from "@mui/material/styles";
-
-import { Page } from "./ProductionTestsComponent";
-
-import { DEFAULT_TEST_SET_ID, DEFAULT_TEST_SET_NAME } from "./constants";
-
-import { Canvas } from "./mui_extensions/Canvas";
-import { Content } from "./mui_extensions/Content";
-import { Controls } from "./mui_extensions/Controls";
+import { DEFAULT_TEST_SET_ID, DEFAULT_TEST_SET_NAME } from './constants';
+import { Canvas } from './mui_extensions/Canvas';
+import { Content } from './mui_extensions/Content';
+import { Controls } from './mui_extensions/Controls';
+import { Page } from './ProductionTestsComponent';
 
 export const Landing = (props: any): JSX.Element => {
   const [testSets, setTestSets] = useState([]);
@@ -36,7 +30,7 @@ export const Landing = (props: any): JSX.Element => {
   const [openDialog, setOpenDialog] = useState(false);
   const [testSetEntry, setTestSetEntry] = useState<any>({
     id: null,
-    name: "Test Set"
+    name: 'Test Set'
   });
 
   const theme = useTheme();
@@ -47,7 +41,7 @@ export const Landing = (props: any): JSX.Element => {
   };
 
   const handleAddButtonClick = () => {
-    setTestSetEntry({ id: null, name: "Test Set" });
+    setTestSetEntry({ id: null, name: 'Test Set' });
     setOpenDialog(true);
   };
 
@@ -159,8 +153,8 @@ export const Landing = (props: any): JSX.Element => {
         >
           <ListItemButton
             selected={selectedID === id}
-            onClick={(event) => handleListItemClick(event, id, name)}
-            sx={{ marginRight: "16px", padding: "0px 16px" }}
+            onClick={event => handleListItemClick(event, id, name)}
+            sx={{ marginRight: '16px', padding: '0px 16px' }}
           >
             <ListItemText primary={name} />
           </ListItemButton>
@@ -170,7 +164,7 @@ export const Landing = (props: any): JSX.Element => {
   };
 
   useEffect(() => {
-    const button = document.getElementById("addTestSetButton");
+    const button = document.getElementById('addTestSetButton');
     if (button && openDialog === false) {
       button.blur();
     }
@@ -190,34 +184,34 @@ export const Landing = (props: any): JSX.Element => {
 
   return (
     <>
-      <Canvas title={props.partNumber + " Production Tests"}>
+      <Canvas title={props.partNumber + ' Production Tests'}>
         <Content
           sx={{
-            display: "flex",
-            flexDirection: "column"
+            display: 'flex',
+            flexDirection: 'column'
           }}
         >
-          <div style={{ margin: "0px auto" }}>
+          <div style={{ margin: '0px auto' }}>
             <Typography>Select Test Set</Typography>
           </div>
           <div
             style={{
-              margin: "24px",
-              overflow: "auto"
+              margin: '24px',
+              overflow: 'auto'
             }}
           >
-            <List sx={{ padding: "0px" }}>
+            <List sx={{ padding: '0px' }}>
               <ListItem key={DEFAULT_TEST_SET_ID} divider>
                 <ListItemButton
                   selected={selectedID === DEFAULT_TEST_SET_ID}
-                  onClick={(event) =>
+                  onClick={event =>
                     handleListItemClick(
                       event,
                       DEFAULT_TEST_SET_ID,
                       DEFAULT_TEST_SET_NAME
                     )
                   }
-                  sx={{ padding: "0px 16px" }}
+                  sx={{ padding: '0px 16px' }}
                 >
                   <ListItemText primary={DEFAULT_TEST_SET_NAME} />
                 </ListItemButton>
@@ -229,7 +223,7 @@ export const Landing = (props: any): JSX.Element => {
                 id="addTestSetButton"
                 color="primary"
                 onClick={() => handleAddButtonClick()}
-                sx={{ marginTop: "8px" }}
+                sx={{ marginTop: '8px' }}
               >
                 <AddBoxIcon />
               </IconButton>
@@ -238,15 +232,15 @@ export const Landing = (props: any): JSX.Element => {
         </Content>
         <Controls
           sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center"
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center'
           }}
         >
           <Button
             onClick={() => handleRunButtonClick()}
-            sx={{ width: "150px" }}
+            sx={{ width: '150px' }}
           >
             Run
           </Button>
@@ -254,10 +248,10 @@ export const Landing = (props: any): JSX.Element => {
             variant="text"
             onClick={() => handleConfigButtonClick()}
             sx={{
-              position: "absolute",
-              top: "50%",
-              left: "24px",
-              transform: "translate(0%, -50%)"
+              position: 'absolute',
+              top: '50%',
+              left: '24px',
+              transform: 'translate(0%, -50%)'
             }}
           >
             <Typography variant="underline">Config</Typography>
@@ -267,10 +261,10 @@ export const Landing = (props: any): JSX.Element => {
             disabled={selectedID === DEFAULT_TEST_SET_ID}
             onClick={() => handleEditButtonClick()}
             sx={{
-              position: "absolute",
-              top: "50%",
-              right: "24px",
-              transform: "translate(0%, -50%)"
+              position: 'absolute',
+              top: '50%',
+              right: '24px',
+              transform: 'translate(0%, -50%)'
             }}
           >
             <Typography
@@ -310,13 +304,13 @@ export const Landing = (props: any): JSX.Element => {
         <DialogActions>
           <Button
             onClick={() => handleDialogCancelButtonClick()}
-            sx={{ width: "100px" }}
+            sx={{ width: '100px' }}
           >
             Cancel
           </Button>
           <Button
             onClick={() => handleDialogDoneButtonClick()}
-            sx={{ width: "100px" }}
+            sx={{ width: '100px' }}
           >
             Done
           </Button>

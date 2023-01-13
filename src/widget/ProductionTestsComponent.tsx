@@ -1,49 +1,41 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 
-import Alert from "@mui/material/Alert";
+import Alert from '@mui/material/Alert';
+import CircularProgress from '@mui/material/CircularProgress';
+import { ThemeProvider } from '@mui/material/styles';
 
-import CircularProgress from "@mui/material/CircularProgress";
-
-import { ThemeProvider } from "@mui/material/styles";
-
-import Config from "./Config";
-
-import Edit from "./Edit";
-
-import Failure from "./Failure";
-
-import Landing from "./Landing";
-
-import Progress from "./Progress";
-
-import { frontend, requestAPI, webdsService } from "./local_exports";
-
+import Config from './Config';
 import {
-  ALERT_MESSAGE_ADD_PUBLIC_CONFIG_JSON,
   ALERT_MESSAGE_ADD_PRIVATE_CONFIG_JSON,
+  ALERT_MESSAGE_ADD_PUBLIC_CONFIG_JSON,
   ALERT_MESSAGE_DEVICE_PART_NUMBER,
-  ALERT_MESSAGE_TEST_SETS_START,
   ALERT_MESSAGE_TEST_SETS_END,
+  ALERT_MESSAGE_TEST_SETS_START,
   LOG_LOCATION
-} from "./constants";
+} from './constants';
+import Edit from './Edit';
+import Failure from './Failure';
+import Landing from './Landing';
+import { frontend, requestAPI, webdsService } from './local_exports';
+import Progress from './Progress';
 
 export enum Page {
-  Landing = "LANDING",
-  Edit = "EDIT",
-  Config = "CONFIG",
-  Progress = "PROGRESS",
-  Failure = "FAILURE"
+  Landing = 'LANDING',
+  Edit = 'EDIT',
+  Config = 'CONFIG',
+  Progress = 'PROGRESS',
+  Failure = 'FAILURE'
 }
 
-let alertMessage = "";
+let alertMessage = '';
 
 export const ProductionTestsComponent = (props: any): JSX.Element => {
   const [initialized, setInitialized] = useState<boolean>(false);
   const [alert, setAlert] = useState<boolean>(false);
   const [page, setPage] = useState<Page>(Page.Landing);
-  const [partNumber, setPartNumber] = useState<string>("");
-  const [fullPartNumber, setFullPartNumber] = useState<string>("");
-  const [failedTestName, setFailedTestName] = useState<string>("");
+  const [partNumber, setPartNumber] = useState<string>('');
+  const [fullPartNumber, setFullPartNumber] = useState<string>('');
+  const [failedTestName, setFailedTestName] = useState<string>('');
   const [testRepo, setTestRepo] = useState<any>(null);
   const [selectedTestSetID, setSelectedTestSetID] = useState<string | null>(
     null
@@ -60,15 +52,15 @@ export const ProductionTestsComponent = (props: any): JSX.Element => {
 
   const showLog = async () => {
     commands
-      .execute("docmanager:open", {
+      .execute('docmanager:open', {
         path: LOG_LOCATION,
-        factory: "Editor",
-        options: { mode: "split-right" }
+        factory: 'Editor',
+        options: { mode: 'split-right' }
       })
       .then((widget: any) => {
-        widget.id = "production_tests_log";
+        widget.id = 'production_tests_log';
         widget.title.closable = true;
-        if (!widget.isAttached) shell.add(widget, "main");
+        if (!widget.isAttached) shell.add(widget, 'main');
         shell.activateById(widget.id);
       });
   };
@@ -91,9 +83,9 @@ export const ProductionTestsComponent = (props: any): JSX.Element => {
       sets: testSets
     });
     try {
-      await requestAPI<any>("production-tests/" + fullPartNumber, {
+      await requestAPI<any>('production-tests/' + fullPartNumber, {
         body: JSON.stringify(testSets),
-        method: "PUT"
+        method: 'PUT'
       });
     } catch (error) {
       console.error(
@@ -104,9 +96,9 @@ export const ProductionTestsComponent = (props: any): JSX.Element => {
 
   const commitCustomTestSettings = async (testSettings: any) => {
     try {
-      await requestAPI<any>("production-tests/" + fullPartNumber, {
+      await requestAPI<any>('production-tests/' + fullPartNumber, {
         body: JSON.stringify(testSettings),
-        method: "PUT"
+        method: 'PUT'
       });
     } catch (error) {
       console.error(
@@ -192,42 +184,42 @@ export const ProductionTestsComponent = (props: any): JSX.Element => {
         }
         return;
       }
-      let fpn = "";
+      let fpn = '';
       try {
         fpn = await webdsService.touchcomm.getPartNumber();
-        fpn = fpn.replace(/ /g, "-");
-        let fpnList = fpn.split(":");
+        fpn = fpn.replace(/ /g, '-');
+        let fpnList = fpn.split(':');
         if (fpnList.length === 2) {
-          fpn = fpnList[0] + "-";
+          fpn = fpnList[0] + '-';
           let utf8 = decodeURI(encodeURIComponent(fpnList[1]));
           for (let i = 0; i < utf8.length; i++) {
             if (i >= 2) {
               break;
             }
             if (i !== 0) {
-              fpn = fpn + ".";
+              fpn = fpn + '.';
             }
             fpn = fpn + utf8.charCodeAt(i).toString();
           }
         }
         setFullPartNumber(fpn);
-        fpn = fpn.replace(/([A-Z])([A-Z])/g, "$1-$2");
-        setPartNumber(fpn.split("-")[0]);
+        fpn = fpn.replace(/([A-Z])([A-Z])/g, '$1-$2');
+        setPartNumber(fpn.split('-')[0]);
       } catch (error) {
         console.error(error);
         showAlert(ALERT_MESSAGE_DEVICE_PART_NUMBER);
         return;
       }
       try {
-        const tr = await requestAPI<any>("production-tests/" + fpn);
+        const tr = await requestAPI<any>('production-tests/' + fpn);
         if (!tr || Object.keys(tr).length === 0) {
           showAlert(
             ALERT_MESSAGE_TEST_SETS_START +
               fpn +
-              ". " +
+              '. ' +
               ALERT_MESSAGE_TEST_SETS_END +
               fpn +
-              "."
+              '.'
           );
           return;
         }
@@ -237,10 +229,10 @@ export const ProductionTestsComponent = (props: any): JSX.Element => {
         showAlert(
           ALERT_MESSAGE_TEST_SETS_START +
             fpn +
-            ". " +
+            '. ' +
             ALERT_MESSAGE_TEST_SETS_END +
             fpn +
-            "."
+            '.'
         );
         return;
       }
@@ -257,7 +249,7 @@ export const ProductionTestsComponent = (props: any): JSX.Element => {
             <Alert
               severity="error"
               onClose={() => setAlert(false)}
-              sx={{ whiteSpace: "pre-wrap" }}
+              sx={{ whiteSpace: 'pre-wrap' }}
             >
               {alertMessage}
             </Alert>
@@ -267,10 +259,10 @@ export const ProductionTestsComponent = (props: any): JSX.Element => {
         {!initialized && (
           <div
             style={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)"
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)'
             }}
           >
             <CircularProgress color="primary" />

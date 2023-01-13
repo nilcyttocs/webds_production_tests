@@ -1,5 +1,2 @@
-export { frontend } from "./index";
-
-export { webdsService } from "./index";
-
-export { requestAPI } from "./handler";
+export { requestAPI } from './handler';
+export { frontend, webdsService } from './index';
