@@ -16,7 +16,7 @@ namespace Attributes {
   export const label = 'Production Tests';
   export const caption = 'Production Tests';
   export const category = 'Touch - Assessment';
-  export const rank = 10;
+  export const rank = 60;
 }
 
 export let webdsService: WebDSService;
