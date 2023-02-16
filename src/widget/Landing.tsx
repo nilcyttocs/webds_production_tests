@@ -173,6 +173,15 @@ export const Landing = (props: any): JSX.Element => {
   }, [openDialog]);
 
   useEffect(() => {
+    const element = document.getElementById('webds_production_tests_test_list');
+    if (element && element.scrollHeight > element.clientHeight) {
+      setListRightPadding(8);
+    } else {
+      setListRightPadding(0);
+    }
+  }, [testSets]);
+
+  useEffect(() => {
     if (props.selectedTestSetID) {
       setSelectedID(props.selectedTestSetID);
     }
@@ -181,12 +190,6 @@ export const Landing = (props: any): JSX.Element => {
   useEffect(() => {
     if (props.testRepo.sets) {
       setTestSets(props.testRepo.sets);
-    }
-    const element = document.getElementById('webds_production_tests_test_list');
-    if (element && element.scrollHeight > element.clientHeight) {
-      setListRightPadding(8);
-    } else {
-      setListRightPadding(0);
     }
   }, [props.testRepo]);
 
