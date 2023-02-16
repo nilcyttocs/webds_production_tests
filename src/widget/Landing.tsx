@@ -20,6 +20,7 @@ import Typography from '@mui/material/Typography';
 
 import { DEFAULT_TEST_SET_ID, DEFAULT_TEST_SET_NAME } from './constants';
 import { Canvas } from './mui_extensions/Canvas';
+import { CANVAS_ATTRS } from './mui_extensions/constants';
 import { Content } from './mui_extensions/Content';
 import { Controls } from './mui_extensions/Controls';
 import { Page } from './ProductionTestsComponent';
@@ -32,6 +33,7 @@ export const Landing = (props: any): JSX.Element => {
     id: null,
     name: 'Test Set'
   });
+  const [listRightPdding, setListRightPadding] = useState<number>(0);
 
   const theme = useTheme();
 
@@ -180,6 +182,12 @@ export const Landing = (props: any): JSX.Element => {
     if (props.testRepo.sets) {
       setTestSets(props.testRepo.sets);
     }
+    const element = document.getElementById('webds_production_tests_test_list');
+    if (element && element.scrollHeight > element.clientHeight) {
+      setListRightPadding(8);
+    } else {
+      setListRightPadding(0);
+    }
   }, [props.testRepo]);
 
   return (
@@ -187,16 +195,18 @@ export const Landing = (props: any): JSX.Element => {
       <Canvas title={props.partNumber + ' Production Tests'}>
         <Content
           sx={{
+            height: CANVAS_ATTRS.MIN_HEIGHT_CONTENT + 'px',
             display: 'flex',
             flexDirection: 'column'
           }}
         >
-          <div style={{ margin: '0px auto' }}>
+          <div style={{ margin: '0px auto 24px auto' }}>
             <Typography>Select Test Set</Typography>
           </div>
           <div
+            id="webds_production_tests_test_list"
             style={{
-              margin: '24px',
+              paddingRight: listRightPdding,
               overflow: 'auto'
             }}
           >
