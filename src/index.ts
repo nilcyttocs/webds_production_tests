@@ -15,7 +15,7 @@ namespace Attributes {
   export const id = 'webds_production_tests_widget';
   export const label = 'Production Tests';
   export const caption = 'Production Tests';
-  export const category = 'Touch - Assessment';
+  export const category = 'Device - Assessment';
   export const rank = 60;
 }
 
