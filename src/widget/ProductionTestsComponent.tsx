@@ -27,11 +27,9 @@ export enum Page {
   Failure = 'FAILURE'
 }
 
-let alertMessage = '';
-
 export const ProductionTestsComponent = (props: any): JSX.Element => {
   const [initialized, setInitialized] = useState<boolean>(false);
-  const [alert, setAlert] = useState<boolean>(false);
+  const [alert, setAlert] = useState<string | undefined>(undefined);
   const [page, setPage] = useState<Page>(Page.Landing);
   const [partNumber, setPartNumber] = useState<string>('');
   const [fullPartNumber, setFullPartNumber] = useState<string>('');
@@ -44,11 +42,6 @@ export const ProductionTestsComponent = (props: any): JSX.Element => {
   const webdsTheme = webdsService.ui.getWebDSTheme();
 
   const { commands, shell } = frontend;
-
-  const showAlert = (message: string) => {
-    alertMessage = message;
-    setAlert(true);
-  };
 
   const showLog = async () => {
     commands
@@ -112,6 +105,7 @@ export const ProductionTestsComponent = (props: any): JSX.Element => {
       case Page.Landing:
         return (
           <Landing
+            setAlert={setAlert}
             partNumber={partNumber}
             testRepo={testRepo}
             selectedTestSetID={selectedTestSetID}
@@ -123,6 +117,7 @@ export const ProductionTestsComponent = (props: any): JSX.Element => {
       case Page.Edit:
         return (
           <Edit
+            setAlert={setAlert}
             partNumber={partNumber}
             testRepo={testRepo}
             selectedTestSetID={selectedTestSetID}
@@ -133,6 +128,7 @@ export const ProductionTestsComponent = (props: any): JSX.Element => {
       case Page.Config:
         return (
           <Config
+            setAlert={setAlert}
             partNumber={partNumber}
             testRepo={testRepo}
             changePage={changePage}
@@ -142,6 +138,7 @@ export const ProductionTestsComponent = (props: any): JSX.Element => {
       case Page.Failure:
         return (
           <Failure
+            setAlert={setAlert}
             partNumber={partNumber}
             testRepo={testRepo}
             failedTestName={failedTestName}
@@ -152,6 +149,7 @@ export const ProductionTestsComponent = (props: any): JSX.Element => {
       case Page.Progress:
         return (
           <Progress
+            setAlert={setAlert}
             partNumber={partNumber}
             fullPartNumber={fullPartNumber}
             testRepo={testRepo}
@@ -178,9 +176,9 @@ export const ProductionTestsComponent = (props: any): JSX.Element => {
       } catch (error) {
         console.error(error);
         if (external) {
-          showAlert(ALERT_MESSAGE_ADD_PUBLIC_CONFIG_JSON);
+          setAlert(ALERT_MESSAGE_ADD_PUBLIC_CONFIG_JSON);
         } else {
-          showAlert(ALERT_MESSAGE_ADD_PRIVATE_CONFIG_JSON);
+          setAlert(ALERT_MESSAGE_ADD_PRIVATE_CONFIG_JSON);
         }
         return;
       }
@@ -207,13 +205,13 @@ export const ProductionTestsComponent = (props: any): JSX.Element => {
         setPartNumber(fpn.split('-')[0]);
       } catch (error) {
         console.error(error);
-        showAlert(ALERT_MESSAGE_DEVICE_PART_NUMBER);
+        setAlert(ALERT_MESSAGE_DEVICE_PART_NUMBER);
         return;
       }
       try {
         const tr = await requestAPI<any>('production-tests/' + fpn);
         if (!tr || Object.keys(tr).length === 0) {
-          showAlert(
+          setAlert(
             ALERT_MESSAGE_TEST_SETS_START +
               fpn +
               '. ' +
@@ -226,7 +224,7 @@ export const ProductionTestsComponent = (props: any): JSX.Element => {
         setTestRepo(tr);
       } catch (error) {
         console.error(error);
-        showAlert(
+        setAlert(
           ALERT_MESSAGE_TEST_SETS_START +
             fpn +
             '. ' +
@@ -245,13 +243,13 @@ export const ProductionTestsComponent = (props: any): JSX.Element => {
     <>
       <ThemeProvider theme={webdsTheme}>
         <div className="jp-webds-widget-body">
-          {alert && (
+          {alert !== undefined && (
             <Alert
               severity="error"
-              onClose={() => setAlert(false)}
+              onClose={() => setAlert(undefined)}
               sx={{ whiteSpace: 'pre-wrap' }}
             >
-              {alertMessage}
+              {alert}
             </Alert>
           )}
           {initialized && displayPage()}
