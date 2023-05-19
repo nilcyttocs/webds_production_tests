@@ -185,23 +185,7 @@ export const ProductionTestsComponent = (props: any): JSX.Element => {
       let fpn = '';
       try {
         fpn = await webdsService.touchcomm.getPartNumber();
-        fpn = fpn.replace(/ /g, '-');
-        let fpnList = fpn.split(':');
-        if (fpnList.length === 2) {
-          fpn = fpnList[0] + '-';
-          let utf8 = decodeURI(encodeURIComponent(fpnList[1]));
-          for (let i = 0; i < utf8.length; i++) {
-            if (i >= 2) {
-              break;
-            }
-            if (i !== 0) {
-              fpn = fpn + '.';
-            }
-            fpn = fpn + utf8.charCodeAt(i).toString();
-          }
-        }
         setFullPartNumber(fpn);
-        fpn = fpn.replace(/([A-Z])([A-Z])/g, '$1-$2');
         setPartNumber(fpn.split('-')[0]);
       } catch (error) {
         console.error(error);
